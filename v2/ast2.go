@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/cznic/ir"
+	"github.com/cznic/mathutil"
 )
 
 // Node represents an AST node.
@@ -334,6 +335,7 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 				Float,
 				Int,
 				Long,
+				LongDouble,
 				LongLong,
 				Short,
 				UChar,
@@ -483,13 +485,16 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 		op := n.Expr.eval(ctx, arr2ptr, fn)
 		for t, done := op.Type, false; !done; {
 			switch x := t.(type) {
+			case *ArrayType:
+				n.Operand = Operand{Type: x}
+				done = true
 			case *NamedType:
 				t = x.Type
 			case *PointerType:
 				n.Operand = Operand{Type: x.Item}
 				done = true
 			default:
-				panic(fmt.Errorf("%v: ExprDeref %v", ctx.position(n), op))
+				panic(fmt.Errorf("%v: ExprDeref %v, arr2ptr %v", ctx.position(n), op, arr2ptr))
 			}
 		}
 	case ExprUnaryPlus: // '+' Expr
@@ -774,7 +779,7 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			case *TaggedUnionType:
 				y := x.getType()
 				if x == y {
-					panic("TODO")
+					panic(fmt.Errorf("%v:", ctx.position(n)))
 				}
 
 				t = y
@@ -1243,16 +1248,24 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 				}
 			}
 
-			if ctx.tweaks.EnableImplicitBuiltins {
-				nm2 := dict.SID("__builtin_" + string(dict.S(nm)))
-				if nm2 != 0 {
-					nm = nm2
-				} else {
-					if !ctx.tweaks.EnableImplicitDeclarations {
-						panic(fmt.Errorf("%v: undefined %q", ctx.position(n), dict.S(nm)))
-					}
+			switch {
+			case builtin:
+				nm = nm2
+			default:
+				if !ctx.tweaks.EnableImplicitDeclarations {
+					panic(fmt.Errorf("%v: undefined %q", ctx.position(n), dict.S(nm)))
 				}
 			}
+			//TODO- if ctx.tweaks.EnableImplicitBuiltins {
+			//TODO- 	nm2 := dict.SID("__builtin_" + string(dict.S(nm)))
+			//TODO- 	if nm2 != 0 {
+			//TODO- 		nm = nm2
+			//TODO- 	} else {
+			//TODO- 		if !ctx.tweaks.EnableImplicitDeclarations {
+			//TODO- 			panic(fmt.Errorf("%v: undefined %q", ctx.position(n), dict.S(nm)))
+			//TODO- 		}
+			//TODO- 	}
+			//TODO- }
 		}
 		switch x := n.Scope.LookupIdent(nm).(type) {
 		case *Declarator:
@@ -2024,7 +2037,7 @@ func (n *InitDeclarator) check(ctx *context, ds *DeclarationSpecifier, sc []int,
 			panic(ctx.position(n)) // error
 		}
 		n.Declarator.check(ctx, ds, ds.typ(ctx), true, sc, fn)
-		n.Initializer.check(ctx, n.Declarator.Type, fn, false)
+		n.Initializer.check(ctx, n.Declarator.Type, fn, false, nil)
 		ex := n.Declarator.Scope.Idents[n.Declarator.Name()].(*Declarator)
 		switch {
 		case ex.Initializer == nil:
@@ -2040,14 +2053,17 @@ func (n *InitDeclarator) check(ctx *context, ds *DeclarationSpecifier, sc []int,
 	return n.Declarator
 }
 
-func (n *Initializer) check(ctx *context, t Type, fn *Declarator, field bool) (r Operand) {
+func (n *Initializer) check(ctx *context, t Type, fn *Declarator, field bool, arr *ArrayType) (r Operand) {
 	// [0]6.7.8
 	switch n.Case {
 	case InitializerCompLit: // '{' InitializerList CommaOpt '}'
 		return n.InitializerList.check(ctx, t, fn)
 	case InitializerExpr: // Expr
 		op := n.Expr.eval(ctx, true, fn)
-		if t.IsScalarType() {
+		switch {
+		case op.isPointerType() && !t.IsPointerType() && arr != nil:
+			t = arr
+		case t.IsScalarType():
 			// 11. The initializer for a scalar shall be a single
 			// expression, optionally enclosed in braces. The
 			// initial value of the object is that of the
@@ -2126,10 +2142,23 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 			var index, maxIndex int64 = 0, -1
 			for ; n != nil; n = n.InitializerList {
 				if n.Designation != nil {
-					panic(fmt.Errorf("%v: TODO", ctx.position(n.Initializer)))
+					dst := n.Designation.check(ctx, x)
+					if len(dst) != 1 {
+						panic(ctx.position(n))
+					}
+
+					ix := dst[0]
+					switch nv := len(r.Values); {
+					case nv < ix:
+						r.Values = append(r.Values, make([]ir.Value, ix-nv)...)
+					case nv > ix:
+						r.Values[ix] = n.Initializer.check(ctx, x.Item, fn, false, x)
+						index++
+						continue
+					}
 				}
 
-				r.Values = append(r.Values, n.Initializer.check(ctx, x.Item, fn, false))
+				r.Values = append(r.Values, n.Initializer.check(ctx, x.Item, fn, false, x))
 				if index > maxIndex {
 					maxIndex = index
 				}
@@ -2159,7 +2188,7 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 				}
 				switch {
 				case field < len(x.Fields):
-					r.Values = append(r.Values, n.Initializer.check(ctx, x.Fields[field].Type, fn, true))
+					r.Values = append(r.Values, n.Initializer.check(ctx, x.Fields[field].Type, fn, true, nil))
 					field++
 				default:
 					panic(fmt.Errorf("%v: TODO", ctx.position(n.Initializer)))
@@ -2215,7 +2244,7 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 				}
 				switch {
 				case field < len(x.Fields):
-					r.Values = append(r.Values, n.Initializer.check(ctx, x.Fields[field].Type, fn, true))
+					r.Values = append(r.Values, n.Initializer.check(ctx, x.Fields[field].Type, fn, true, nil))
 					field++
 				default:
 					panic(fmt.Errorf("%v: TODO", ctx.position(n.Initializer)))
@@ -2231,6 +2260,27 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 
 func (n *Designation) check(ctx *context, t Type) (r []int) {
 	switch x := underlyingType(t, true).(type) {
+	case *ArrayType:
+		for l := n.DesignatorList; l != nil; l = l.DesignatorList {
+			switch n := l.Designator; n.Case {
+			case DesignatorField: // '.' IDENTIFIER
+				panic("TODO")
+			case DesignatorIndex: // '[' ConstExpr ']'
+				op := n.ConstExpr.eval(ctx)
+				switch x := op.Value.(type) {
+				case *ir.Int64Value:
+					if v := x.Value; v < mathutil.MinInt || v > mathutil.MaxInt {
+						panic("TODO")
+					}
+
+					r = append(r, int(x.Value))
+				default:
+					panic(fmt.Errorf("%v: %T", ctx.position(n), x))
+				}
+			default:
+				panic("TODO")
+			}
+		}
 	case *StructType:
 		ctx.model.Layout(x)
 		for l := n.DesignatorList; l != nil; l = l.DesignatorList {
@@ -2396,7 +2446,7 @@ func (n *Declarator) insert(ctx *context, isFunction bool) {
 					break
 				}
 
-				panic(fmt.Errorf("%v: %v, %v", ctx.position(n), ex.Type, n.Type))
+				panic(fmt.Errorf("%v: %s %v, %v %v:", ctx.position(ex), dict.S(nm), ex.Type, n.Type, ctx.position(n)))
 			default:
 				panic(n.Linkage)
 			}

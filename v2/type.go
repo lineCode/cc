@@ -450,7 +450,7 @@ func (t *ArrayType) assign(ctx *context, n Node, op Operand) Operand {
 }
 
 // IsPointerType implements Type.
-func (t *ArrayType) IsPointerType() bool { panic("TODO") }
+func (t *ArrayType) IsPointerType() bool { return false }
 
 // IsIntegerType implements Type.
 func (t *ArrayType) IsIntegerType() bool { return false }
