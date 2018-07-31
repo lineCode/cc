@@ -109,7 +109,7 @@ func (t TypeKind) assign(ctx *context, n Node, op Operand) Operand {
 		t.IsArithmeticType() && op.Type.IsArithmeticType():
 		return op.ConvertTo(ctx.model, t)
 	default:
-		panic(fmt.Sprintf("%v <- %v", t, op))
+		panic(fmt.Sprintf("%v: %v <- %v", ctx.position(n), t, op))
 	}
 }
 
@@ -950,7 +950,8 @@ type structBase struct {
 func (s *structBase) findField(nm int) *FieldProperties {
 	fps := s.layout
 	if x, ok := s.scope.Idents[nm].(*Declarator); ok {
-		return &fps[x.Field]
+		r := fps[x.Field]
+		return &r
 	}
 
 	for _, v := range fps {
@@ -1352,7 +1353,9 @@ func (t *TaggedStructType) String() string { return fmt.Sprintf("struct %s", dic
 type UnionType struct{ structBase }
 
 // Field returns the properties of field nm or nil if the field does not exist.
-func (t *UnionType) Field(nm int) *FieldProperties { return t.findField(nm) }
+func (t *UnionType) Field(nm int) *FieldProperties {
+	return t.findField(nm)
+}
 
 // IsUnsigned implements Type.
 func (t *UnionType) IsUnsigned() bool { panic("TODO") }

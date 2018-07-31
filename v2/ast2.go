@@ -1038,6 +1038,11 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 				case isVaList(t.Params[i]) && isVaList(rhs.Type):
 					ops[i] = rhs
 				default:
+					if rhs.Type.Kind() == Ptr && t.Params[i].IsIntegerType() {
+						ops[i] = rhs.ConvertTo(ctx.model, t.Params[i])
+						break
+					}
+
 					ops[i] = AdjustedParameterType(t.Params[i]).assign(ctx, n, rhs)
 				}
 			}
@@ -2282,31 +2287,48 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 			}
 		}
 	case *StructType:
-		ctx.model.Layout(x)
+		t := Type(x)
 		for l := n.DesignatorList; l != nil; l = l.DesignatorList {
+			ctx.model.Layout(t)
 			switch n := l.Designator; n.Case {
 			case DesignatorField: // '.' IDENTIFIER
 				nm := n.Token2.Val
-				f := x.Field(nm)
-				if f.Type == nil {
-					panic("TODO")
-				}
+				var f *FieldProperties
+				switch x := t.(type) {
+				case *StructType:
+					f = x.Field(nm)
+					if f == nil || f.Type == nil {
+						panic(fmt.Errorf("(C) %v: TODO %q", ctx.position(n.Token2), dict.S(nm)))
+					}
 
-				if fi := f.Declarator.Field; fi > len(x.Fields) || x.Fields[fi].Name != nm {
+					if fi := f.Declarator.Field; fi > len(x.Fields) || x.Fields[fi].Name != nm {
+						panic("TODO")
+					}
+				case *UnionType:
+					f = x.Field(nm)
+					if f == nil || f.Type == nil {
+						panic(fmt.Errorf("(C) %v: TODO %q", ctx.position(n.Token2), dict.S(nm)))
+					}
+
+					if fi := f.Declarator.Field; fi > len(x.Fields) || x.Fields[fi].Name != nm {
+						panic("TODO")
+					}
+				default:
 					panic("TODO")
 				}
 
 				r = append(r, f.Declarator.Field)
+				t = f.Type
 			case DesignatorIndex: // '[' ConstExpr ']'
 				panic("TODO")
 			default:
 				panic("TODO")
 			}
 		}
-		n.List = r
 	default:
 		panic(fmt.Errorf("%v: %T", ctx.position(n), x))
 	}
+	n.List = r
 	return r
 }
 

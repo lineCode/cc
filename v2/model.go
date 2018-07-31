@@ -200,6 +200,7 @@ func (f *FieldProperties) Mask() uint64 {
 
 // Layout computes the memory layout of t.
 func (m Model) Layout(t Type) (r []FieldProperties) {
+	//TODO memoize
 	switch x := UnderlyingType(t).(type) {
 	case *StructType:
 		if len(x.Fields) == 0 {
