@@ -542,6 +542,7 @@ import (
 			//yy:field	StorageDuration		StorageDuration		// Storage duration of the declared name, [0]6.2.4.
 			//yy:field	Type			Type			// Declared type.
 			//yy:field	TypeQualifiers		[]*TypeQualifier	// From the PointerOpt production, if any.
+			//yy:field	unnamed			int
 			//yy:field	vars			[]*Declarator		// Function declarator only.
 			//yy:field	AddressTaken		bool
 			//yy:field	Alloca			bool			// Function declarator: Body calls __builtin_alloca
@@ -767,10 +768,18 @@ import (
 /*yy:case Switch     */ |	"switch" '(' ExprList ')' Stmt
 
                         // [0]6.8.5
+			//yy:field	scope		*Scope
 /*yy:case Do         */ IterationStmt:
                         	"do" Stmt "while" '(' ExprList ')' ';'
 /*yy:case ForDecl    */ |	"for" '(' Declaration ExprListOpt ';' ExprListOpt ')' Stmt
+				{
+					lhs.scope = lx.scope
+					lx.popScope()
+				}
 /*yy:case For        */ |	"for" '(' ExprListOpt ';' ExprListOpt ';' ExprListOpt ')' Stmt
+				{
+					lx.popScope()
+				}
 /*yy:case While      */ |	"while" '(' ExprList ')' Stmt
 
                         // [0]6.8.6

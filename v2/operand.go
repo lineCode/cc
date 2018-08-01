@@ -386,8 +386,12 @@ func (o Operand) ConvertTo(m Model, t Type) (r Operand) {
 		switch t.Kind() {
 		case Double, LongDouble:
 			return Operand{Type: t, Value: &ir.Float64Value{Value: float64(o.Value.(*ir.Int64Value).Value)}}.normalize(m)
+		case DoubleComplex:
+			return Operand{Type: t, Value: &ir.Complex128Value{Value: complex(float64(o.Value.(*ir.Int64Value).Value), 0)}}.normalize(m)
 		case Float:
 			return Operand{Type: t, Value: &ir.Float32Value{Value: float32(o.Value.(*ir.Int64Value).Value)}}.normalize(m)
+		case FloatComplex:
+			return Operand{Type: t, Value: &ir.Complex64Value{Value: complex(float32(o.Value.(*ir.Int64Value).Value), 0)}}.normalize(m)
 		default:
 			panic(t)
 		}
@@ -482,11 +486,6 @@ func (o Operand) cpl(ctx *context) Operand {
 
 func (o Operand) div(ctx *context, n Node, p Operand) (r Operand) {
 	o, p = UsualArithmeticConversions(ctx.model, o, p)
-	if p.IsZero() {
-		ctx.err(n, "division by zero")
-		return Operand{Type: o.Type}.normalize(ctx.model)
-	}
-
 	if o.IsZero() { // 0 / x == 0
 		return o.normalize(ctx.model)
 	}
@@ -498,12 +497,19 @@ func (o Operand) div(ctx *context, n Node, p Operand) (r Operand) {
 
 	switch x := o.Value.(type) {
 	case *ir.Int64Value:
+		if p.IsZero() {
+			ctx.err(n, "division by zero")
+			return Operand{Type: o.Type}.normalize(ctx.model)
+		}
+
 		switch {
 		case o.Type.IsUnsigned():
 			return Operand{Type: o.Type, Value: &ir.Int64Value{Value: int64(uint64(x.Value) / uint64(p.Value.(*ir.Int64Value).Value))}}.normalize(ctx.model)
 		default:
 			return Operand{Type: o.Type, Value: &ir.Int64Value{Value: x.Value / p.Value.(*ir.Int64Value).Value}}.normalize(ctx.model)
 		}
+	case *ir.Float32Value:
+		return Operand{Type: o.Type, Value: &ir.Float32Value{Value: x.Value / p.Value.(*ir.Float32Value).Value}}.normalize(ctx.model)
 	case *ir.Float64Value:
 		return Operand{Type: o.Type, Value: &ir.Float64Value{Value: x.Value / p.Value.(*ir.Float64Value).Value}}.normalize(ctx.model)
 	default:
@@ -697,6 +703,8 @@ func (o Operand) IsZero() bool {
 	switch x := o.Value.(type) {
 	case nil:
 		return false
+	case *ir.Complex128Value:
+		return x.Value == 0
 	case *ir.Float32Value:
 		return x.Value == 0
 	case *ir.Float64Value:
@@ -1052,6 +1060,8 @@ func (o Operand) normalize(m Model) (r Operand) {
 		// nop
 	case
 		*ir.AddressValue,
+		*ir.Complex128Value,
+		*ir.Complex64Value,
 		*ir.Float32Value,
 		*ir.Float64Value,
 		*ir.StringValue:
@@ -1129,6 +1139,8 @@ func (o Operand) sub(ctx *context, p Operand) (r Operand) {
 	switch x := o.Value.(type) {
 	case *ir.Int64Value:
 		return Operand{Type: o.Type, Value: &ir.Int64Value{Value: x.Value - p.Value.(*ir.Int64Value).Value}}.normalize(ctx.model)
+	case *ir.Float32Value:
+		return Operand{Type: o.Type, Value: &ir.Float32Value{Value: x.Value - p.Value.(*ir.Float32Value).Value}}.normalize(ctx.model)
 	case *ir.Float64Value:
 		return Operand{Type: o.Type, Value: &ir.Float64Value{Value: x.Value - p.Value.(*ir.Float64Value).Value}}.normalize(ctx.model)
 	default:

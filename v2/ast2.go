@@ -359,7 +359,7 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			panic(t)
 		}
 		if n.Operand.Value == nil {
-			panic("TODO")
+			panic(fmt.Errorf("%v", ctx.position(n)))
 		}
 	case ExprNot: // '!' Expr
 		n.Operand = Operand{Type: Int}
@@ -389,10 +389,11 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 		if n.InitializerList == nil {
 			n.InitializerList = &InitializerList{}
 		}
-		n.InitializerList.check(ctx, t, nil)
+		n.InitializerList.check(ctx, t, fn)
 		nmTok := n.Token
 		nmTok.Char.Rune = IDENTIFIER
-		nmTok.Val = idUnnamed
+		fn.unnamed++
+		nmTok.Val = dict.SID(fmt.Sprintf("unnamed%d", fn.unnamed))
 		d := &Declarator{
 			DirectDeclarator: &DirectDeclarator{
 				Case:  DirectDeclaratorIdent,
@@ -407,9 +408,7 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			Type:       t,
 		}
 		n.Declarator = d
-		if fn != nil {
-			fn.vars = append(fn.vars, d)
-		}
+		fn.vars = append(fn.vars, d)
 	case ExprCast: // '(' TypeName ')' Expr
 		// [0]6.5.4
 		t := n.TypeName.check(ctx)
@@ -1231,7 +1230,13 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			panic(fmt.Errorf("%v: %T", ctx.position(n), t))
 		}
 		if !index.isIntegerType() {
-			panic("TODO")
+			l := UnderlyingType(op.Type)
+			switch {
+			case l.IsIntegerType() && index.isPointerType():
+				n.Operand = Operand{Type: UnderlyingType(index.Type).(*PointerType).Item}
+			default:
+				panic(fmt.Errorf("%v: %v[%v]", ctx.position(n), op.Type, index))
+			}
 		}
 		if d := n.Expr.Declarator; d != nil {
 			d.Referenced++
@@ -1943,7 +1948,14 @@ func (n *IterationStmt) check(ctx *context, fn *Declarator, seq *int, sc []int, 
 			panic(ctx.position)
 		}
 		n.Stmt.check(ctx, fn, seq, sc, inSwitch, true)
-	//TODO case IterationStmtForDecl: // "for" '(' Declaration ExprListOpt ';' ExprListOpt ')' Stmt
+	case IterationStmtForDecl: // "for" '(' Declaration ExprListOpt ';' ExprListOpt ')' Stmt
+		n.Declaration.check(ctx, sc, fn, n.scope)
+		n.ExprListOpt.eval(ctx, true, fn)
+		if e := n.ExprListOpt.eval(ctx, true, fn); e.Type != nil && !e.isScalarType() {
+			panic(ctx.position(n))
+		}
+		n.ExprListOpt2.eval(ctx, true, fn)
+		n.Stmt.check(ctx, fn, seq, sc, inSwitch, true)
 	case IterationStmtFor: // "for" '(' ExprListOpt ';' ExprListOpt ';' ExprListOpt ')' Stmt
 		// [0]6.8.5.3
 		n.ExprListOpt.eval(ctx, true, fn)
@@ -2153,18 +2165,19 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 		case *ArrayType:
 			var index, maxIndex int64 = 0, -1
 			for ; n != nil; n = n.InitializerList {
+				n0.Len++
 				if n.Designation != nil {
 					dst := n.Designation.check(ctx, x)
 					if len(dst) != 1 {
 						panic(ctx.position(n))
 					}
 
-					ix := dst[0]
-					switch nv := len(r.Values); {
-					case nv < ix:
-						r.Values = append(r.Values, make([]ir.Value, ix-nv)...)
-					case nv > ix:
-						r.Values[ix] = n.Initializer.check(ctx, x.Item, fn, false, x)
+					index = int64(dst[0])
+					switch nv := int64(len(r.Values)); {
+					case nv < index:
+						r.Values = append(r.Values, make([]ir.Value, index-nv)...)
+					case nv > index:
+						r.Values[index] = n.Initializer.check(ctx, x.Item, fn, false, x)
 						index++
 						continue
 					}
@@ -2175,7 +2188,6 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 					maxIndex = index
 				}
 				index++
-				n0.Len++
 			}
 			if x.Size.Type == nil {
 				x.Size = newIntConst(ctx, n0, uint64(maxIndex+1), UInt, ULong, ULongLong)
@@ -2244,7 +2256,7 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 						panic(fmt.Errorf("%v: %v", ctx.position(n), t))
 					}
 				default:
-					panic(n.Case)
+					panic(fmt.Errorf("%v: %v", ctx.position(n), n.Case))
 				}
 			default:
 				panic("TODO")
@@ -2339,7 +2351,7 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 						panic("TODO")
 					}
 				default:
-					panic("TODO")
+					panic(fmt.Errorf("%v", ctx.position(n)))
 				}
 
 				r = append(r, f.Declarator.Field)
@@ -2378,7 +2390,7 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 						panic("TODO")
 					}
 				default:
-					panic(fmt.Errorf("%T", x))
+					panic(fmt.Errorf("%v: %T", ctx.position(n), x))
 				}
 
 				r = append(r, f.Declarator.Field)
@@ -3140,6 +3152,7 @@ func (n *Expr) isSideEffectsFree() bool {
 		ExprFloat,      // FLOATCONST
 		ExprIdent,      // IDENTIFIER
 		ExprInt,        // INTCONST
+		ExprLChar,      // LONGCHARCONST
 		ExprSizeofExpr, // "sizeof" Expr
 		ExprSizeofType, // "sizeof" '(' TypeName ')'
 		ExprString:     // STRINGLITERAL

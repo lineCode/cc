@@ -182,6 +182,8 @@ func (l *lexer) Lex(lval *yySymType) (r int) {
 	typedef := l.typedef
 	l.typedef = false
 	switch lval.Token.Rune {
+	case FOR:
+		l.newScope()
 	case NON_REPL:
 		lval.Token.Rune = IDENTIFIER
 		fallthrough

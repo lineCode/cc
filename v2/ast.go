@@ -602,7 +602,8 @@ type Declarator struct {
 	StorageDuration      StorageDuration  // Storage duration of the declared name, [0]6.2.4.
 	Type                 Type             // Declared type.
 	TypeQualifiers       []*TypeQualifier // From the PointerOpt production, if any.
-	vars                 []*Declarator    // Function declarator only.
+	unnamed              int
+	vars                 []*Declarator // Function declarator only.
 	AddressTaken         bool
 	Alloca               bool // Function declarator: Body calls __builtin_alloca
 	Embedded             bool // [0]6.7.5-3: Not a full declarator.
@@ -2197,6 +2198,7 @@ func (n IterationStmtCase) String() string {
 //	|       "for" '(' ExprListOpt ';' ExprListOpt ';' ExprListOpt ')' Stmt  // Case IterationStmtFor
 //	|       "while" '(' ExprList ')' Stmt                                   // Case IterationStmtWhile
 type IterationStmt struct {
+	scope        *Scope
 	Case         IterationStmtCase
 	Declaration  *Declaration
 	ExprList     *ExprList

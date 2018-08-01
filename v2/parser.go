@@ -4250,7 +4250,8 @@ yynewstate:
 		}
 	case 221:
 		{
-			yyVAL.node = &IterationStmt{
+			lx := yylex.(*lexer)
+			lhs := &IterationStmt{
 				Case:         IterationStmtForDecl,
 				Token:        yyS[yypt-7].Token,
 				Token2:       yyS[yypt-6].Token,
@@ -4261,9 +4262,13 @@ yynewstate:
 				Token4:       yyS[yypt-1].Token,
 				Stmt:         yyS[yypt-0].node.(*Stmt),
 			}
+			yyVAL.node = lhs
+			lhs.scope = lx.scope
+			lx.popScope()
 		}
 	case 222:
 		{
+			lx := yylex.(*lexer)
 			yyVAL.node = &IterationStmt{
 				Case:         IterationStmtFor,
 				Token:        yyS[yypt-8].Token,
@@ -4276,6 +4281,7 @@ yynewstate:
 				Token5:       yyS[yypt-1].Token,
 				Stmt:         yyS[yypt-0].node.(*Stmt),
 			}
+			lx.popScope()
 		}
 	case 223:
 		{

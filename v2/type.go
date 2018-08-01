@@ -871,7 +871,8 @@ func (t *PointerType) Equal(u Type) bool {
 		*ArrayType,
 		*FunctionType,
 		*StructType,
-		*TaggedStructType:
+		*TaggedStructType,
+		*UnionType:
 
 		return false
 	case *NamedType:

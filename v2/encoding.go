@@ -107,7 +107,6 @@ var (
 	idSizeT                  = dict.SID("size_t")
 	idStatic                 = dict.SID("static")
 	idUndef                  = dict.SID("undef")
-	idUnnamed                = dict.SID("unnamed")
 	idVaArgs                 = dict.SID("__VA_ARGS__")
 	idVaList                 = dict.SID("va_list")
 	idWarning                = dict.SID("warning")
