@@ -159,6 +159,12 @@ func (d *DeclarationSpecifier) typ(ctx *context) Type {
 		return SChar
 	case d.is(TypeSpecifierChar, TypeSpecifierUnsigned):
 		return UChar
+	case d.is(TypeSpecifierComplex, TypeSpecifierDouble):
+		return DoubleComplex
+	case d.is(TypeSpecifierComplex, TypeSpecifierDouble, TypeSpecifierLong):
+		return LongDoubleComplex
+	case d.is(TypeSpecifierComplex, TypeSpecifierFloat):
+		return FloatComplex
 	case d.is(TypeSpecifierDouble, TypeSpecifierLong):
 		return LongDouble
 	case d.is(TypeSpecifierInt, TypeSpecifierLong):
@@ -401,7 +407,9 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			Type:       t,
 		}
 		n.Declarator = d
-		fn.vars = append(fn.vars, d)
+		if fn != nil {
+			fn.vars = append(fn.vars, d)
+		}
 	case ExprCast: // '(' TypeName ')' Expr
 		// [0]6.5.4
 		t := n.TypeName.check(ctx)
@@ -453,10 +461,13 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			case
 				Char,
 				Double,
+				DoubleComplex,
 				Float,
+				FloatComplex,
 				Int,
 				Long,
 				LongDouble,
+				LongDoubleComplex,
 				LongLong,
 				SChar,
 				Short,
@@ -1261,16 +1272,6 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 					panic(fmt.Errorf("%v: undefined %q", ctx.position(n), dict.S(nm)))
 				}
 			}
-			//TODO- if ctx.tweaks.EnableImplicitBuiltins {
-			//TODO- 	nm2 := dict.SID("__builtin_" + string(dict.S(nm)))
-			//TODO- 	if nm2 != 0 {
-			//TODO- 		nm = nm2
-			//TODO- 	} else {
-			//TODO- 		if !ctx.tweaks.EnableImplicitDeclarations {
-			//TODO- 			panic(fmt.Errorf("%v: undefined %q", ctx.position(n), dict.S(nm)))
-			//TODO- 		}
-			//TODO- 	}
-			//TODO- }
 		}
 		switch x := n.Scope.LookupIdent(nm).(type) {
 		case *Declarator:
@@ -1307,10 +1308,13 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 				case
 					Char,
 					Double,
+					DoubleComplex,
 					Float,
+					FloatComplex,
 					Int,
 					Long,
 					LongDouble,
+					LongDoubleComplex,
 					LongLong,
 					SChar,
 					Short,
@@ -1444,10 +1448,13 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			case
 				Char,
 				Double,
+				DoubleComplex,
 				Float,
+				FloatComplex,
 				Int,
 				Long,
 				LongDouble,
+				LongDoubleComplex,
 				LongLong,
 				SChar,
 				Short,
@@ -2186,6 +2193,14 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 					}
 
 					field = dst[0]
+					switch nv := len(r.Values); {
+					case nv < field:
+						r.Values = append(r.Values, make([]ir.Value, field-nv)...)
+					case nv > field:
+						r.Values[field] = n.Initializer.check(ctx, x.Fields[field].Type, fn, true, nil)
+						field++
+						continue
+					}
 				}
 
 				for x.Fields[field].Bits < 0 {
@@ -2237,11 +2252,21 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 		case *UnionType:
 			field := 0
 			for ; n != nil; n = n.InitializerList {
-				if field != 0 {
-					panic("TODO")
-				}
 				if n.Designation != nil {
-					panic(fmt.Errorf("%v: TODO", ctx.position(n.Initializer)))
+					dst := n.Designation.check(ctx, x)
+					if len(dst) != 1 {
+						panic(ctx.position(n))
+					}
+
+					field = dst[0]
+					switch nv := len(r.Values); {
+					case nv < field:
+						r.Values = append(r.Values, make([]ir.Value, field-nv)...)
+					case nv > field:
+						r.Values[field] = n.Initializer.check(ctx, x.Fields[field].Type, fn, true, nil)
+						field++
+						continue
+					}
 				}
 
 				for x.Fields[field].Bits < 0 {
@@ -2324,6 +2349,48 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 			default:
 				panic("TODO")
 			}
+		}
+	case *UnionType:
+		t := Type(x)
+		for l := n.DesignatorList; l != nil; l = l.DesignatorList {
+			ctx.model.Layout(t)
+			switch n := l.Designator; n.Case {
+			case DesignatorField: // '.' IDENTIFIER
+				nm := n.Token2.Val
+				var f *FieldProperties
+				switch x := t.(type) {
+				//TODO case *StructType:
+				//TODO 	f = x.Field(nm)
+				//TODO 	if f == nil || f.Type == nil {
+				//TODO 		panic(fmt.Errorf("(C) %v: TODO %q", ctx.position(n.Token2), dict.S(nm)))
+				//TODO 	}
+
+				//TODO 	if fi := f.Declarator.Field; fi > len(x.Fields) || x.Fields[fi].Name != nm {
+				//TODO 		panic("TODO")
+				//TODO 	}
+				case *UnionType:
+					f = x.Field(nm)
+					if f == nil || f.Type == nil {
+						panic(fmt.Errorf("(C) %v: TODO %q", ctx.position(n.Token2), dict.S(nm)))
+					}
+
+					if fi := f.Declarator.Field; fi > len(x.Fields) || x.Fields[fi].Name != nm {
+						panic("TODO")
+					}
+				default:
+					panic(fmt.Errorf("%T", x))
+				}
+
+				r = append(r, f.Declarator.Field)
+				t = f.Type
+			//TODO case DesignatorIndex: // '[' ConstExpr ']'
+			//TODO 	panic("TODO")
+			default:
+				panic(n.Case)
+			}
+		}
+		if len(r) > 1 {
+			panic("TODO")
 		}
 	default:
 		panic(fmt.Errorf("%v: %T", ctx.position(n), x))
@@ -2788,9 +2855,9 @@ func (n *TypeQualifier) check(ctx *context, ds *DeclarationSpecifier) {
 func (n *TypeSpecifier) check(ctx *context, ds *DeclarationSpecifier) {
 	switch n.Case {
 	//TODO case TypeSpecifierBool: // "_Bool"
-	//TODO case TypeSpecifierComplex: // "_Complex"
 	case
 		TypeSpecifierChar,     // "char"
+		TypeSpecifierComplex,  // "_Complex"
 		TypeSpecifierDouble,   // "double"
 		TypeSpecifierFloat,    // "float"
 		TypeSpecifierInt,      // "int"
@@ -3085,6 +3152,7 @@ func (n *Expr) isSideEffectsFree() bool {
 		ExprAndAssign, // Expr "&=" Expr
 		ExprAssign,    // Expr '=' Expr
 		ExprCall,      // Expr '(' ArgumentExprListOpt ')'
+		ExprCompLit,   // '(' TypeName ')' '{' InitializerList CommaOpt '}' //TODO we can do better
 		ExprDivAssign, // Expr "/=" Expr
 		ExprLshAssign, // Expr "<<=" Expr
 		ExprModAssign, // Expr "%=" Expr

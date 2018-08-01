@@ -146,8 +146,11 @@ func (t TypeKind) IsIntegerType() bool {
 		return true
 	case
 		Double,
+		DoubleComplex,
 		Float,
+		FloatComplex,
 		LongDouble,
+		LongDoubleComplex,
 		Void:
 
 		return false
@@ -162,10 +165,13 @@ func (t TypeKind) IsScalarType() bool {
 	case
 		Char,
 		Double,
+		DoubleComplex,
 		Float,
+		FloatComplex,
 		Int,
 		Long,
 		LongDouble,
+		LongDoubleComplex,
 		LongLong,
 		SChar,
 		Short,
@@ -219,8 +225,11 @@ func (t TypeKind) IsCompatible(u Type) bool {
 			switch x {
 			case
 				Double,
+				DoubleComplex,
 				Float,
-				LongDouble:
+				FloatComplex,
+				LongDouble,
+				LongDoubleComplex:
 
 				return t == x
 			case Void:
@@ -260,10 +269,13 @@ func (t TypeKind) Equal(u Type) bool {
 		case
 			Char,
 			Double,
+			DoubleComplex,
 			Float,
+			FloatComplex,
 			Int,
 			Long,
 			LongDouble,
+			LongDoubleComplex,
 			LongLong,
 			SChar,
 			Short,
@@ -1596,10 +1608,13 @@ func AdjustedParameterType(t Type) Type {
 			case
 				Char,
 				Double,
+				DoubleComplex,
 				LongDouble,
 				Float,
+				FloatComplex,
 				Int,
 				Long,
+				LongDoubleComplex,
 				LongLong,
 				SChar,
 				Short,
@@ -1668,10 +1683,13 @@ func underlyingType(t Type, enums bool) Type {
 			case
 				Char,
 				Double,
+				DoubleComplex,
 				Float,
+				FloatComplex,
 				Int,
 				Long,
 				LongDouble,
+				LongDoubleComplex,
 				LongLong,
 				SChar,
 				Short,
