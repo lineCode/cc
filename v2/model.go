@@ -549,7 +549,10 @@ func (m Model) defaultArgumentPromotion(op Operand) (r Operand) {
 			switch x {
 			case Float:
 				return op.ConvertTo(m, Double)
-			case Double:
+			case
+				Double,
+				LongDouble:
+
 				return op
 			case
 				Char,

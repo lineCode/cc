@@ -1064,7 +1064,8 @@ func (o Operand) normalize(m Model) (r Operand) {
 		*ir.Complex64Value,
 		*ir.Float32Value,
 		*ir.Float64Value,
-		*ir.StringValue:
+		*ir.StringValue,
+		*ir.WideStringValue:
 
 		// nop
 	default:

@@ -686,7 +686,9 @@ func (t *FunctionType) Equal(u Type) bool {
 func (t *FunctionType) Kind() TypeKind { return Function }
 
 // assign implements Type.
-func (t *FunctionType) assign(ctx *context, n Node, op Operand) Operand { panic("TODO") }
+func (t *FunctionType) assign(ctx *context, n Node, op Operand) Operand {
+	panic(fmt.Errorf("%v", ctx.position(n)))
+}
 
 // IsPointerType implements Type.
 func (t *FunctionType) IsPointerType() bool { return false }
@@ -1118,7 +1120,7 @@ func (t *StructType) assign(ctx *context, n Node, op Operand) Operand {
 }
 
 // IsPointerType implements Type.
-func (t *StructType) IsPointerType() bool { panic("TODO") }
+func (t *StructType) IsPointerType() bool { return false }
 
 // IsIntegerType implements Type.
 func (t *StructType) IsIntegerType() bool { return false }

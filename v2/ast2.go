@@ -322,6 +322,9 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 		// [0]6.5.3.4
 		switch t := n.Expr.eval(ctx, false, fn).Type.(type) { // [0]6.3.2.1-3
 		case *ArrayType:
+			if t.Size.Type == nil {
+				panic(fmt.Errorf("%v", ctx.position(n)))
+			}
 			n.Operand = t.Size.mul(ctx, ctx.sizeof(t.Item))
 		case
 			*PointerType,
@@ -2326,13 +2329,13 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 	case *StructType:
 		t := Type(x)
 		for l := n.DesignatorList; l != nil; l = l.DesignatorList {
-			ctx.model.Layout(t)
 			switch n := l.Designator; n.Case {
 			case DesignatorField: // '.' IDENTIFIER
 				nm := n.Token2.Val
 				var f *FieldProperties
 				switch x := t.(type) {
 				case *StructType:
+					ctx.model.Layout(t)
 					f = x.Field(nm)
 					if f == nil || f.Type == nil {
 						panic(fmt.Errorf("(C) %v: TODO %q", ctx.position(n.Token2), dict.S(nm)))
@@ -2342,6 +2345,7 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 						panic("TODO")
 					}
 				case *UnionType:
+					ctx.model.Layout(t)
 					f = x.Field(nm)
 					if f == nil || f.Type == nil {
 						panic(fmt.Errorf("(C) %v: TODO %q", ctx.position(n.Token2), dict.S(nm)))
@@ -2357,7 +2361,7 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 				r = append(r, f.Declarator.Field)
 				t = f.Type
 			case DesignatorIndex: // '[' ConstExpr ']'
-				panic("TODO")
+				panic(fmt.Errorf("%v", ctx.position(n)))
 			default:
 				panic("TODO")
 			}
@@ -2365,7 +2369,6 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 	case *UnionType:
 		t := Type(x)
 		for l := n.DesignatorList; l != nil; l = l.DesignatorList {
-			ctx.model.Layout(t)
 			switch n := l.Designator; n.Case {
 			case DesignatorField: // '.' IDENTIFIER
 				nm := n.Token2.Val
@@ -2381,6 +2384,7 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 				//TODO 		panic("TODO")
 				//TODO 	}
 				case *UnionType:
+					ctx.model.Layout(t)
 					f = x.Field(nm)
 					if f == nil || f.Type == nil {
 						panic(fmt.Errorf("(C) %v: TODO %q", ctx.position(n.Token2), dict.S(nm)))
