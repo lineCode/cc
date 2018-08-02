@@ -687,7 +687,21 @@ func (t *FunctionType) Kind() TypeKind { return Function }
 
 // assign implements Type.
 func (t *FunctionType) assign(ctx *context, n Node, op Operand) Operand {
-	panic(fmt.Errorf("%v", ctx.position(n)))
+	switch x := UnderlyingType(op.Type).(type) {
+	case *PointerType:
+		switch y := UnderlyingType(x.Item).(type) {
+		case *FunctionType:
+			if !t.Equal(y) {
+				panic(fmt.Errorf("%v: %v != %v", ctx.position(n), t, y))
+			}
+
+			return op
+		default:
+			panic(fmt.Errorf("%v: %T", ctx.position(n), y))
+		}
+	default:
+		panic(fmt.Errorf("%v: %T", ctx.position(n), x))
+	}
 }
 
 // IsPointerType implements Type.
@@ -697,7 +711,7 @@ func (t *FunctionType) IsPointerType() bool { return false }
 func (t *FunctionType) IsIntegerType() bool { return false }
 
 // IsScalarType implements Type.
-func (t *FunctionType) IsScalarType() bool { panic("TODO") }
+func (t *FunctionType) IsScalarType() bool { return false }
 
 func (t *FunctionType) String() string {
 	var buf bytes.Buffer

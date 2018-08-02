@@ -80,6 +80,7 @@ var (
 	Null = &ir.AddressValue{}
 
 	idAsm                    = dict.SID("asm")
+	idAttribute              = dict.SID("__attribute__")
 	idBuiltinAlloca          = dict.SID("__builtin_alloca")
 	idBuiltinTypesCompatible = dict.SID("__builtin_types_compatible__") // Implements __builtin_types_compatible_p
 	idBuiltinVaList          = dict.SID("__builtin_va_list")

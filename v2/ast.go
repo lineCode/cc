@@ -390,6 +390,7 @@ func (n *ConstExpr) Pos() token.Pos {
 //	Declaration:
 //	        DeclarationSpecifiers InitDeclaratorListOpt ';'  // Case 0
 type Declaration struct {
+	Attributes            [][]xc.Token
 	DeclarationSpecifiers *DeclarationSpecifiers
 	InitDeclaratorListOpt *InitDeclaratorListOpt
 	Token                 xc.Token
@@ -587,7 +588,8 @@ func (n *DeclarationSpecifiersOpt) Pos() token.Pos {
 //	Declarator:
 //	        PointerOpt DirectDeclarator  // Case 0
 type Declarator struct {
-	AssignedTo           int                   // Declarator appears at the left side of assignment.
+	AssignedTo           int // Declarator appears at the left side of assignment.
+	Attributes           [][]xc.Token
 	Bits                 int                   // StructDeclarator: bit width when a bit field.
 	DeclarationSpecifier *DeclarationSpecifier // Nil for embedded declarators.
 	Definition           *Declarator           // Declaration -> definition.

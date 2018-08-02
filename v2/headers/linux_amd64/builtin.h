@@ -41,8 +41,6 @@ void __builtin_exit(int __status);
 void __builtin_trap(void);
 void __register_stdfiles(void *, void *, void *, void *);
 
-#define __attribute(x)
-#define __attribute__(xyz)
 #define __builtin_choose_expr(a, b, c) (a) ? (b) : (c)
 #define __builtin_expect(exp, c) (exp)
 #define __builtin_offsetof(st, m) ((__SIZE_TYPE__)(&((st *)0)->m))

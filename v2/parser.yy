@@ -358,9 +358,17 @@ import (
                         	Expr
 
                         // [0]6.7
+			//yy:field	Attributes		[][]xc.Token
 			Declaration:
-                        	DeclarationSpecifiers InitDeclaratorListOpt ';'
+                        	DeclarationSpecifiers InitDeclaratorListOpt
 				{
+					lx.attr2 = lx.attr
+				}
+				';'
+				{
+					if len(lx.attr2) != 0 {
+						lhs.Attributes = lx.attrs()
+					}
 					lx.scope.typedef = false
 				}
 
@@ -528,6 +536,7 @@ import (
 
                         // [0]6.7.5
 			//yy:field	AssignedTo		int			// Declarator appears at the left side of assignment.
+			//yy:field	Attributes		[][]xc.Token
 			//yy:field	Bits			int			// StructDeclarator: bit width when a bit field.
 			//yy:field	DeclarationSpecifier	*DeclarationSpecifier	// Nil for embedded declarators.
 			//yy:field	Definition		*Declarator		// Declaration -> definition.
@@ -553,6 +562,10 @@ import (
                         Declarator:
                         	PointerOpt DirectDeclarator
 				{
+					lhs.Attributes = lx.attrs()
+					//TODO- if r := lhs.Attributes; len(r) != 0 {
+					//TODO- 	__yyfmt__.Printf("%v: %q %s\n", lx.position(lhs), dict.S(lhs.Name()), PrettyString(r)) //TODO- DBG
+					//TODO- }
 					lhs.Scope = lx.scope
 					if lx.scope.typedef {
 						delete(lx.scope.Idents, lhs.DirectDeclarator.nm())

@@ -2088,6 +2088,9 @@ func (n *Initializer) check(ctx *context, t Type, fn *Declarator, field bool, ar
 	case InitializerExpr: // Expr
 		op := n.Expr.eval(ctx, true, fn)
 		switch {
+		case t.Kind() == Function && op.Type.IsPointerType() && UnderlyingType(op.Type).(*PointerType).Item.Kind() == Function:
+			t.assign(ctx, n, op)
+			return n.Expr.Operand
 		case op.isPointerType() && !t.IsPointerType() && arr != nil:
 			t = arr
 		case t.IsScalarType():
@@ -2147,7 +2150,7 @@ func (n *Initializer) check(ctx *context, t Type, fn *Declarator, field bool, ar
 			return op
 		}
 
-		panic(fmt.Errorf("%v: TODO Initializer %v %v", ctx.position(n), t, op))
+		panic(fmt.Errorf("%v: TODO Initializer t %v, op %v", ctx.position(n), t, op))
 	default:
 		panic(fmt.Errorf("%v: TODO Initializer %v", ctx.position(n), n.Case))
 	}
