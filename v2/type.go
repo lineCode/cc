@@ -716,11 +716,16 @@ func (t *FunctionType) IsScalarType() bool { return false }
 func (t *FunctionType) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("function (")
-	for i, v := range t.Params {
-		if i != 0 {
-			buf.WriteString(", ")
+	switch {
+	case len(t.Params) == 1 && t.Params[0].Kind() == Void:
+		// nop
+	default:
+		for i, v := range t.Params {
+			if i != 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(v.String())
 		}
-		buf.WriteString(v.String())
 	}
 	fmt.Fprintf(&buf, ") returning %v", t.Result)
 	return buf.String()
