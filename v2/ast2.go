@@ -2103,6 +2103,16 @@ func (n *Initializer) check(ctx *context, t Type, fn *Declarator, field bool, ar
 			// unqualified version of its declared type.
 			t.assign(ctx, n, op)
 			return n.Expr.Operand
+		case op.IsZero():
+			switch k := UnderlyingType(t).Kind(); k {
+			case
+				Array,
+				Union:
+
+				return op
+			default:
+				panic(fmt.Errorf("%v: %v", ctx.position(n.Expr), k))
+			}
 		}
 
 		if t.Kind() == Struct || t.Kind() == Union {
@@ -2173,7 +2183,8 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 			for ; n != nil; n = n.InitializerList {
 				n0.Len++
 				if n.Designation != nil {
-					dst := n.Designation.check(ctx, x)
+					dst, nt := n.Designation.check(ctx, x)
+					_ = nt //TODO
 					if len(dst) != 1 {
 						panic(ctx.position(n))
 					}
@@ -2205,13 +2216,14 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 			field := 0
 			for ; n != nil; n = n.InitializerList {
 				if n.Designation != nil {
-					dst := n.Designation.check(ctx, x)
+					dst, nt := n.Designation.check(ctx, x)
+					field = int(dst[0])
 					if len(dst) != 1 {
-						panic(ctx.position(n))
+						panic(fmt.Errorf("%v: %v %v", ctx.position(n), dst, nt))
 					}
 
-					field = dst[0]
 					switch nv := len(r.Values); {
+
 					case nv < field:
 						r.Values = append(r.Values, make([]ir.Value, field-nv)...)
 					case nv > field:
@@ -2271,12 +2283,13 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 			field := 0
 			for ; n != nil; n = n.InitializerList {
 				if n.Designation != nil {
-					dst := n.Designation.check(ctx, x)
+					dst, nt := n.Designation.check(ctx, x)
+					_ = nt //TODO
 					if len(dst) != 1 {
 						panic(ctx.position(n))
 					}
 
-					field = dst[0]
+					field = int(dst[0])
 					switch nv := len(r.Values); {
 					case nv < field:
 						r.Values = append(r.Values, make([]ir.Value, field-nv)...)
@@ -2306,9 +2319,10 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 	}
 }
 
-func (n *Designation) check(ctx *context, t Type) (r []int) {
+func (n *Designation) check(ctx *context, t Type) (r []int64, nt Type) {
 	switch x := underlyingType(t, true).(type) {
 	case *ArrayType:
+		nt = x.Item
 		for l := n.DesignatorList; l != nil; l = l.DesignatorList {
 			switch n := l.Designator; n.Case {
 			case DesignatorField: // '.' IDENTIFIER
@@ -2321,7 +2335,7 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 						panic("TODO")
 					}
 
-					r = append(r, int(x.Value))
+					r = append(r, x.Value)
 				default:
 					panic(fmt.Errorf("%v: %T", ctx.position(n), x))
 				}
@@ -2361,10 +2375,30 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 					panic(fmt.Errorf("%v", ctx.position(n)))
 				}
 
-				r = append(r, f.Declarator.Field)
+				r = append(r, int64(f.Declarator.Field))
 				t = f.Type
+				nt = t
 			case DesignatorIndex: // '[' ConstExpr ']'
-				panic(fmt.Errorf("%v", ctx.position(n)))
+				op := n.ConstExpr.eval(ctx)
+				switch x := UnderlyingType(t).(type) {
+				case *ArrayType:
+					nt = x.Item
+					switch y := op.Value.(type) {
+					case *ir.Int64Value:
+						if x.Size.Value == nil {
+							panic("TODO")
+						}
+
+						if y.Value >= x.Size.Value.(*ir.Int64Value).Value {
+							panic("TODO")
+						}
+						r = append(r, y.Value)
+					default:
+						panic(fmt.Errorf("%v: %v %T %v", ctx.position(n), t, y, op))
+					}
+				default:
+					panic(fmt.Errorf("%v: %v %T %v", ctx.position(n), t, x, op))
+				}
 			default:
 				panic("TODO")
 			}
@@ -2400,8 +2434,9 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 					panic(fmt.Errorf("%v: %T", ctx.position(n), x))
 				}
 
-				r = append(r, f.Declarator.Field)
+				r = append(r, int64(f.Declarator.Field))
 				t = f.Type
+				nt = t
 			//TODO case DesignatorIndex: // '[' ConstExpr ']'
 			//TODO 	panic("TODO")
 			default:
@@ -2415,7 +2450,7 @@ func (n *Designation) check(ctx *context, t Type) (r []int) {
 		panic(fmt.Errorf("%v: %T", ctx.position(n), x))
 	}
 	n.List = r
-	return r
+	return r, nt
 }
 
 func (n *Declarator) check(ctx *context, ds *DeclarationSpecifier, t Type, isObject bool, sc []int, fn *Declarator) (r Type) {
@@ -2566,6 +2601,13 @@ func (n *Declarator) insert(ctx *context, isFunction bool) {
 				}
 
 				if !ex.Type.IsCompatible(n.Type) {
+					if ex.Type.Kind() == Function && ex.FunctionDefinition == nil && n.FunctionDefinition != nil {
+						if len(ex.Type.(*FunctionType).Params) == 0 {
+							n.Scope.Idents[nm] = n
+							break
+						}
+					}
+
 					if !(n.Name() == idMain && n.Scope.Parent == nil && n.Type.Kind() == Function) {
 						//IncompatibleTypeDiff(ex.Type, n.Type) //TODO-
 						panic(fmt.Errorf("%v: %v\n%v: %v", ctx.position(ex), ex.Type, ctx.position(n), n.Type))

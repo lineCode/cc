@@ -710,7 +710,7 @@ import (
                         |	InitializerList ',' Designation Initializer
 
                         // [0]6.7.8
-			//yy:field	List	[]int
+			//yy:field	List	[]int64
                         Designation:
                         	DesignatorList '='
 
