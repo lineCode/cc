@@ -563,9 +563,9 @@ import (
                         	PointerOpt DirectDeclarator
 				{
 					lhs.Attributes = lx.attrs()
-					//TODO- if r := lhs.Attributes; len(r) != 0 {
-					//TODO- 	__yyfmt__.Printf("%v: %q %s\n", lx.position(lhs), dict.S(lhs.Name()), PrettyString(r)) //TODO- DBG
-					//TODO- }
+					// if r := lhs.Attributes; len(r) != 0 {
+					// 	__yyfmt__.Printf("%v: %q %s\n", lx.position(lhs), dict.S(lhs.Name()), PrettyString(r)) //TODO- DBG
+					// }
 					lhs.Scope = lx.scope
 					if lx.scope.typedef {
 						delete(lx.scope.Idents, lhs.DirectDeclarator.nm())
