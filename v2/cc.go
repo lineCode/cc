@@ -521,7 +521,7 @@ func (c *context) wideChar() Type {
 		case "windows":
 			sz = 2
 		case "linux":
-			sz = 2
+			sz = 4
 		default:
 			panic(goos)
 		}

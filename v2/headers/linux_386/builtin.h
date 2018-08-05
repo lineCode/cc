@@ -36,6 +36,7 @@ void *__builtin_memset(void *s, int c, __SIZE_TYPE__ n);
 void *__ccgo_va_end;
 void *__ccgo_va_start;
 #endif
+void __GO__(char*);
 void __builtin_abort(void);
 void __builtin_exit(int __status);
 void __builtin_trap(void);
