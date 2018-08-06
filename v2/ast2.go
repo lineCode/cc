@@ -1109,6 +1109,9 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			lhs.isPointerType() && rhs.isPointerType() && (lhs.Type.IsCompatible(rhs.Type) || ctx.tweaks.EnablePointerCompatibility):
 
 			n.Operand = Operand{Type: ctx.ptrDiff()}
+			if rhs.IsZero() {
+				n.Operand.Value = lhs.Value
+			}
 		case
 			// the left operand is a pointer to an object type and
 			// the right operand has integer type.
