@@ -524,6 +524,7 @@ func TestCPPExpand(t *testing.T) {
 			return nil
 		}
 
+		t.Log(path)
 		ctx, err := newContext(&Tweaks{
 			cppExpandTest: true,
 		})

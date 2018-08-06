@@ -247,12 +247,20 @@ func (m *Macro) param(ap [][]xc.Token, nm int, out *[]xc.Token) bool {
 			o := *out
 			for i, v := range ap[i:] {
 				if i != 0 {
-					t := o[len(o)-1]
-					t.Rune = ','
-					t.Val = 0
-					o = append(o, t)
-					t.Rune = ' '
-					o = append(o, t)
+					switch lo := len(o); lo {
+					case 0:
+						var t xc.Token
+						t.Rune = ','
+						t.Val = 0
+						o = append(o, t)
+					default:
+						t := o[len(o)-1]
+						t.Rune = ','
+						t.Val = 0
+						o = append(o, t)
+						t.Rune = ' '
+						o = append(o, t)
+					}
 				}
 				o = append(o, v...)
 			}
@@ -266,12 +274,20 @@ func (m *Macro) param(ap [][]xc.Token, nm int, out *[]xc.Token) bool {
 			o := *out
 			for i, v := range ap[i:] {
 				if i != 0 {
-					t := o[len(o)-1]
-					t.Rune = ','
-					t.Val = 0
-					o = append(o, t)
-					t.Rune = ' '
-					o = append(o, t)
+					switch lo := len(o); lo {
+					case 0:
+						var t xc.Token
+						t.Rune = ','
+						t.Val = 0
+						o = append(o, t)
+					default:
+						t := o[len(o)-1]
+						t.Rune = ','
+						t.Val = 0
+						o = append(o, t)
+						t.Rune = ' '
+						o = append(o, t)
+					}
 				}
 				o = append(o, v...)
 			}
@@ -802,6 +818,9 @@ func (c *cpp) glue(ls, rs []xc.Token) (n int, out []xc.Token) {
 	}
 
 	l := ls[len(ls)-1]
+	if l.Rune == NON_REPL {
+		l.Rune = IDENTIFIER
+	}
 	ls = ls[:len(ls)-1]
 	r := rs[0]
 	rs = rs[1:]

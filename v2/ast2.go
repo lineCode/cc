@@ -2192,7 +2192,7 @@ func (n *InitializerList) check(ctx *context, t Type, fn *Declarator) Operand {
 						panic(ctx.position(n))
 					}
 
-					index = int64(dst[0])
+					index = dst[0]
 					switch nv := int64(len(r.Values)); {
 					case nv < index:
 						r.Values = append(r.Values, make([]ir.Value, index-nv)...)
