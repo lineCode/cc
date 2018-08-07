@@ -33,8 +33,8 @@ void *__builtin_alloca(__SIZE_TYPE__ __size);
 void *__builtin_memcpy(void *dest, const void *src, __SIZE_TYPE__ n);
 void *__builtin_memset(void *s, int c, __SIZE_TYPE__ n);
 #ifdef __ccgo__
-void *__ccgo_va_end;
-void *__ccgo_va_start;
+extern void *__ccgo_va_end;
+extern void *__ccgo_va_start;
 #endif
 void __GO__(char*);
 void __builtin_abort(void);

@@ -100,6 +100,7 @@ func (d *DeclarationSpecifier) typ(ctx *context) Type {
 							Float,
 							Int,
 							Long,
+							LongDouble,
 							LongLong,
 							SChar,
 							Short,
@@ -1232,8 +1233,20 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			n.Operand = Operand{Type: t.Item}
 		case *NamedType:
 			n.Operand = Operand{Type: t.Type}
+		case TypeKind:
+			if !t.IsIntegerType() {
+				panic(fmt.Errorf("%v: %T %v", ctx.position(n), t, t))
+			}
+
+			r := UnderlyingType(index.Type)
+			switch {
+			case r.IsPointerType():
+				n.Operand = Operand{Type: r.(*PointerType).Item}
+			default:
+				panic(fmt.Errorf("%v: %v[%v]", ctx.position(n), op.Type, index))
+			}
 		default:
-			panic(fmt.Errorf("%v: %T", ctx.position(n), t))
+			panic(fmt.Errorf("%v: %T %v", ctx.position(n), t, t))
 		}
 		if !index.isIntegerType() {
 			l := UnderlyingType(op.Type)

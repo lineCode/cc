@@ -563,7 +563,7 @@ func (t *EnumType) assign(ctx *context, n Node, op Operand) Operand {
 }
 
 // IsPointerType implements Type.
-func (t *EnumType) IsPointerType() bool { panic("TODO") }
+func (t *EnumType) IsPointerType() bool { return false }
 
 // IsIntegerType implements Type.
 func (t *EnumType) IsIntegerType() bool { return true }
@@ -1527,6 +1527,7 @@ func (t *UnionType) Equal(u Type) bool {
 	case TypeKind:
 		switch x {
 		case
+			Char,
 			Int,
 			UInt,
 			ULongLong,
