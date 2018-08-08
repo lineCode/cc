@@ -1010,101 +1010,57 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 		}
 
 		n.Operand = Operand{Type: t.Result}
+
 		// 2. If the expression that denotes the called function has a
 		// type that includes a prototype, the number of arguments
 		// shall agree with the number of parameters. Each argument
 		// shall have a type such that its value may be assigned to an
 		// object with the unqualified version of the type of its
 		// corresponding parameter.
-
-		//TODO params := t.Params
-		//TODO var voidParams bool
-		//TODO if voidParams = len(params) == 1 && params[0].Kind() == Void; voidParams {
-		//TODO 	params = nil
-		//TODO }
-		//TODO switch {
-		//TODO case len(args) < len(params):
-		//TODO 	panic(fmt.Errorf("%v: args %v params %v variadic %v", ctx.position(n), len(args), len(params), t.Variadic))
-		//TODO case len(args) == len(params):
-		//TODO 	for i, rhs := range args {
-		//TODO 		if isVaList(params[i]) && isVaList(rhs.Type) {
-		//TODO 			ops[i] = rhs
-		//TODO 			continue
-		//TODO 		}
-
-		//TODO 		ops[i] = AdjustedParameterType(params[i]).assign(ctx, n, rhs)
-		//TODO 	}
-		//TODO default: // len(args) > len(params)
-		//TODO 	if voidParams {
-		//TODO 		panic(fmt.Errorf("%v: args %v params %v variadic %v", ctx.position(n), len(args), len(params), t.Variadic))
-		//TODO 	}
-
-		//TODO 	switch {
-		//TODO 	case t.Variadic:
-		//TODO 		for i, rhs := range args {
-		//TODO 			if i >= len(params) {
-		//TODO 				ops[i] = ctx.model.defaultArgumentPromotion(rhs)
-		//TODO 				continue
-		//TODO 			}
-
-		//TODO 			if isVaList(params[i]) && isVaList(rhs.Type) {
-		//TODO 				ops[i] = rhs
-		//TODO 				continue
-		//TODO 			}
-
-		//TODO 			ops[i] = AdjustedParameterType(params[i]).assign(ctx, n, rhs)
-		//TODO 		}
-		//TODO 	default:
-		//TODO 		panic(fmt.Errorf("%v: args %v params %v variadic %v", ctx.position(n), len(args), len(params), t.Variadic))
-		//TODO 	}
-		//TODO }
-
-	out2:
+		params := t.Params
+		var voidParams bool
+		if voidParams = len(params) == 1 && params[0].Kind() == Void; voidParams {
+			params = nil
+		}
 		switch {
-		case t.Variadic:
-			switch {
-			case len(args) >= len(t.Params):
-				// ok
-			default:
-				panic(ctx.position(n))
-			}
-			for i, rhs := range args {
-				if i >= len(t.Params) {
-					ops[i] = ctx.model.defaultArgumentPromotion(rhs)
-					continue
-				}
-
-				ops[i] = AdjustedParameterType(t.Params[i]).assign(ctx, n, rhs)
-			}
-		default:
-			switch {
-			case len(args) == len(t.Params):
-				// ok
-			case len(args) == 0 && len(t.Params) == 1 && t.Params[0] == Void:
-				// ok
-			case len(t.Params) == 0:
-				// ok
-			default:
-				panic(ctx.position(n))
-			}
-
+		case voidParams && len(args) != 0:
+			panic(fmt.Errorf("%v: %v args %v params %v variadic %v voidParams %v", ctx.position(n), n.Case, len(args), len(params), t.Variadic, voidParams))
+		case len(args) < len(params):
+			panic(fmt.Errorf("%v: %v args %v params %v variadic %v voidParams %v", ctx.position(n), n.Case, len(args), len(params), t.Variadic, voidParams))
+		case len(args) == len(params):
 			for i, rhs := range args {
 				switch {
-				case i >= len(t.Params): // Allow void f(); f(42);
-					ops[i] = ctx.model.defaultArgumentPromotion(rhs)
 				case isVaList(t.Params[i]) && isVaList(rhs.Type):
 					ops[i] = rhs
+				case rhs.Type.Kind() == Ptr && t.Params[i].IsIntegerType():
+					ops[i] = rhs.ConvertTo(ctx.model, t.Params[i])
 				default:
-					if rhs.Type.Kind() == Ptr && t.Params[i].IsIntegerType() {
-						ops[i] = rhs.ConvertTo(ctx.model, t.Params[i])
-						break
-					}
-
 					ops[i] = AdjustedParameterType(t.Params[i]).assign(ctx, n, rhs)
 				}
 			}
-			break out2
+
+		// len(args) > len(params)
+		case t.Variadic:
+			for i, rhs := range args {
+				switch {
+				case i >= len(t.Params):
+					ops[i] = ctx.model.defaultArgumentPromotion(rhs)
+				case isVaList(t.Params[i]) && isVaList(rhs.Type):
+					ops[i] = rhs
+				case rhs.Type.Kind() == Ptr && t.Params[i].IsIntegerType():
+					ops[i] = rhs.ConvertTo(ctx.model, t.Params[i])
+				default:
+					ops[i] = AdjustedParameterType(t.Params[i]).assign(ctx, n, rhs)
+				}
+			}
+		case len(params) == 0:
+			for i, rhs := range args {
+				ops[i] = ctx.model.defaultArgumentPromotion(rhs)
+			}
+		default:
+			panic(fmt.Errorf("%v: %v args %v params %v variadic %v voidParams %v", ctx.position(n), n.Case, len(args), len(params), t.Variadic, voidParams))
 		}
+
 		for i, v := range ops {
 			if v.Value != nil {
 				ops[i] = v.ConvertTo(ctx.model, ops[i].Type)
