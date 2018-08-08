@@ -1016,6 +1016,49 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 		// shall have a type such that its value may be assigned to an
 		// object with the unqualified version of the type of its
 		// corresponding parameter.
+
+		//TODO params := t.Params
+		//TODO var voidParams bool
+		//TODO if voidParams = len(params) == 1 && params[0].Kind() == Void; voidParams {
+		//TODO 	params = nil
+		//TODO }
+		//TODO switch {
+		//TODO case len(args) < len(params):
+		//TODO 	panic(fmt.Errorf("%v: args %v params %v variadic %v", ctx.position(n), len(args), len(params), t.Variadic))
+		//TODO case len(args) == len(params):
+		//TODO 	for i, rhs := range args {
+		//TODO 		if isVaList(params[i]) && isVaList(rhs.Type) {
+		//TODO 			ops[i] = rhs
+		//TODO 			continue
+		//TODO 		}
+
+		//TODO 		ops[i] = AdjustedParameterType(params[i]).assign(ctx, n, rhs)
+		//TODO 	}
+		//TODO default: // len(args) > len(params)
+		//TODO 	if voidParams {
+		//TODO 		panic(fmt.Errorf("%v: args %v params %v variadic %v", ctx.position(n), len(args), len(params), t.Variadic))
+		//TODO 	}
+
+		//TODO 	switch {
+		//TODO 	case t.Variadic:
+		//TODO 		for i, rhs := range args {
+		//TODO 			if i >= len(params) {
+		//TODO 				ops[i] = ctx.model.defaultArgumentPromotion(rhs)
+		//TODO 				continue
+		//TODO 			}
+
+		//TODO 			if isVaList(params[i]) && isVaList(rhs.Type) {
+		//TODO 				ops[i] = rhs
+		//TODO 				continue
+		//TODO 			}
+
+		//TODO 			ops[i] = AdjustedParameterType(params[i]).assign(ctx, n, rhs)
+		//TODO 		}
+		//TODO 	default:
+		//TODO 		panic(fmt.Errorf("%v: args %v params %v variadic %v", ctx.position(n), len(args), len(params), t.Variadic))
+		//TODO 	}
+		//TODO }
+
 	out2:
 		switch {
 		case t.Variadic:
