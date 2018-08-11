@@ -2156,23 +2156,53 @@ func (n *Initializer) check(ctx *context, t Type, fn *Declarator, field bool, ar
 			panic(ctx.position(n))
 		}
 
-		if t.Kind() == Array && (t.(*ArrayType).Item == Char || t.(*ArrayType).Item == UChar) && op.isPointerType() && op.Type.(*PointerType).Item == Char {
-			// 14. An array of character type may be initialized by
-			// a character string literal, optionally enclosed in
-			// braces. Successive characters of the character
-			// string literal (including the terminating null
-			// character if there is room or if the array is of
-			// unknown size) initialize the elements of the array.
-			x := t.(*ArrayType)
-			if !field && x.Size.Type == nil {
-				switch y := op.Value.(type) {
-				case *ir.StringValue:
-					x.Size = newIntConst(ctx, n, uint64(len(dict.S(int(y.StringID)))+1), UInt, ULong, ULongLong)
-				default:
-					panic(fmt.Errorf("%v: TODO", ctx.position(n)))
+		if t.Kind() == Array {
+			at := UnderlyingType(t).(*ArrayType)
+			switch UnderlyingType(at.Item).Kind() {
+			case Char, UChar:
+				if op.isPointerType() && op.Type.(*PointerType).Item == Char {
+					// 14. An array of character type may be initialized by
+					// a character string literal, optionally enclosed in
+					// braces. Successive characters of the character
+					// string literal (including the terminating null
+					// character if there is room or if the array is of
+					// unknown size) initialize the elements of the array.
+					x := t.(*ArrayType)
+					if !field && x.Size.Type == nil {
+						switch y := op.Value.(type) {
+						case *ir.StringValue:
+							x.Size = newIntConst(ctx, n, uint64(len(dict.S(int(y.StringID)))+1), UInt, ULong, ULongLong)
+						default:
+							panic(fmt.Errorf("%v: TODO", ctx.position(n)))
+						}
+					}
+					return op
+				}
+			case Array:
+				at2 := UnderlyingType(at.Item).(*ArrayType)
+				switch UnderlyingType(at2.Item).Kind() {
+				case Char, UChar:
+					if op.isPointerType() && op.Type.(*PointerType).Item == Char {
+						// 14. An array of character type may be initialized by
+						// a character string literal, optionally enclosed in
+						// braces. Successive characters of the character
+						// string literal (including the terminating null
+						// character if there is room or if the array is of
+						// unknown size) initialize the elements of the array.
+						if !field && at2.Size.Type == nil {
+							switch y := op.Value.(type) {
+							case *ir.StringValue:
+								at2.Size = newIntConst(ctx, n, uint64(len(dict.S(int(y.StringID)))+1), UInt, ULong, ULongLong)
+							default:
+								panic(fmt.Errorf("%v: TODO", ctx.position(n)))
+							}
+						}
+						return op
+					}
+				case Array:
+					panic(fmt.Errorf("%v: TODO Initializer t %v, op %v", ctx.position(n), at2, op))
 				}
 			}
-			return op
 		}
 
 		panic(fmt.Errorf("%v: TODO Initializer t %v, op %v", ctx.position(n), t, op))
