@@ -134,7 +134,7 @@ func (m Model) Equal(n Model) bool {
 func (m Model) Sizeof(t Type) int64 {
 	switch x := UnderlyingType(t).(type) {
 	case *ArrayType:
-		if x.Size.Type == nil || x.Size.Value == nil {
+		if x.Size.Type == nil && x.Size.Value == nil { // T[], but not T[i+2]
 			return int64(m[Ptr].Size)
 		}
 

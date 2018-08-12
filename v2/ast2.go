@@ -326,6 +326,7 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			if t.Size.Type == nil {
 				panic(fmt.Errorf("%v", ctx.position(n)))
 			}
+
 			n.Operand = t.Size.mul(ctx, ctx.sizeof(t.Item))
 		case
 			*PointerType,
@@ -500,7 +501,7 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 		for t, done := op.Type, false; !done; {
 			switch x := t.(type) {
 			case *ArrayType:
-				n.Operand = Operand{Type: x}
+				n.Operand = Operand{Type: x.Item}
 				done = true
 			case *NamedType:
 				t = x.Type
