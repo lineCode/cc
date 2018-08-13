@@ -3102,6 +3102,7 @@ yynewstate:
 				Token: yyS[yypt-0].Token,
 			}
 			yyVAL.node = lhs
+			lhs.Scope = lx.scope
 			if len(lx.attr2) != 0 {
 				lhs.Attributes = lx.attrs()
 			}
@@ -3601,9 +3602,6 @@ yynewstate:
 			}
 			yyVAL.node = lhs
 			lhs.Attributes = lx.attrs()
-			// if r := lhs.Attributes; len(r) != 0 {
-			// 	__yyfmt__.Printf("%v: %q %s\n", lx.position(lhs), dict.S(lhs.Name()), PrettyString(r)) //TODO- DBG
-			// }
 			lhs.Scope = lx.scope
 			if lx.scope.typedef {
 				delete(lx.scope.Idents, lhs.DirectDeclarator.nm())
@@ -4270,7 +4268,7 @@ yynewstate:
 	case 222:
 		{
 			lx := yylex.(*lexer)
-			lhs := &IterationStmt{
+			yyVAL.node = &IterationStmt{
 				Case:         IterationStmtForDecl,
 				Token:        yyS[yypt-7].Token,
 				Token2:       yyS[yypt-6].Token,
@@ -4281,8 +4279,6 @@ yynewstate:
 				Token4:       yyS[yypt-1].Token,
 				Stmt:         yyS[yypt-0].node.(*Stmt),
 			}
-			yyVAL.node = lhs
-			lhs.scope = lx.scope
 			lx.popScope()
 		}
 	case 223:
@@ -4386,6 +4382,7 @@ yynewstate:
 		}
 	case 234:
 		{
+			lx := yylex.(*lexer)
 			lhs := &FunctionDefinition{
 				Case: FunctionDefinitionSpec,
 				DeclarationSpecifiers: yyS[yypt-4].node.(*DeclarationSpecifiers),
@@ -4395,6 +4392,9 @@ yynewstate:
 			}
 			yyVAL.node = lhs
 			lhs.Declarator.FunctionDefinition = lhs
+			if lx.scope.Parent != nil {
+				panic("internal error")
+			}
 		}
 	case 235:
 		{
@@ -4407,6 +4407,7 @@ yynewstate:
 		}
 	case 236:
 		{
+			lx := yylex.(*lexer)
 			lhs := &FunctionDefinition{
 				Case:               FunctionDefinitionInt,
 				Declarator:         yyS[yypt-3].node.(*Declarator),
@@ -4415,6 +4416,9 @@ yynewstate:
 			}
 			yyVAL.node = lhs
 			lhs.Declarator.FunctionDefinition = lhs
+			if lx.scope.Parent != nil {
+				panic("internal error")
+			}
 		}
 	case 237:
 		{

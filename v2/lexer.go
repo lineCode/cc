@@ -186,8 +186,6 @@ more:
 	typedef := l.typedef
 	l.typedef = false
 	switch lval.Token.Rune {
-	case FOR:
-		l.newScope()
 	case NON_REPL:
 		lval.Token.Rune = IDENTIFIER
 		fallthrough
@@ -231,6 +229,9 @@ more:
 		lval.Token.Val = 0
 	}
 
+	if l.prev == FOR {
+		l.newScope()
+	}
 	l.prev = int(lval.Token.Rune)
 	return l.prev
 }

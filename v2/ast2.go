@@ -1308,8 +1308,17 @@ func (n *Expr) eval(ctx *context, arr2ptr bool, fn *Declarator) Operand {
 			t0 := t
 		more2:
 			switch y := t.(type) {
+			case *ArrayType:
+				if !x.IsFunctionParameter && y.Size.Type == nil {
+					switch {
+					case x.IsTLD() && x.DeclarationSpecifier.IsExtern():
+						// ok
+					default:
+						panic(fmt.Errorf("%v: %s has incomplete type: %v", ctx.position(x), dict.S(x.Name()), t0))
+					}
+				}
+				n.Operand = Operand{Type: t0}
 			case
-				*ArrayType,
 				*EnumType,
 				*PointerType,
 				*StructType,
@@ -1968,7 +1977,7 @@ func (n *IterationStmt) check(ctx *context, fn *Declarator, seq *int, sc []int, 
 		}
 		n.Stmt.check(ctx, fn, seq, sc, inSwitch, true)
 	case IterationStmtForDecl: // "for" '(' Declaration ExprListOpt ';' ExprListOpt ')' Stmt
-		n.Declaration.check(ctx, sc, fn, n.scope)
+		n.Declaration.check(ctx, sc, fn, n.Declaration.Scope)
 		n.ExprListOpt.eval(ctx, true, fn)
 		if e := n.ExprListOpt.eval(ctx, true, fn); e.Type != nil && !e.isScalarType() {
 			panic(ctx.position(n))
@@ -2050,7 +2059,18 @@ func (n *Declaration) check(ctx *context, sc []int, fn *Declarator, scope *Scope
 	if len(ds.TypeSpecifiers) == 0 { // [0]6.7.2-2
 		panic("TODO")
 	}
-	return n.InitDeclaratorListOpt.check(ctx, ds, sc, fn, scope)
+	r := n.InitDeclaratorListOpt.check(ctx, ds, sc, fn, scope)
+	for _, v := range r {
+		if v.Linkage == LinkageNone {
+			switch x := UnderlyingType(v.Type).(type) {
+			case *ArrayType:
+				if x.Size.Type == nil {
+					panic(fmt.Errorf("%v: %s has incomplete type: %v", ctx.position(v), dict.S(v.Name()), v.Type))
+				}
+			}
+		}
+	}
+	return r
 }
 
 func (n *InitDeclaratorListOpt) check(ctx *context, ds *DeclarationSpecifier, sc []int, fn *Declarator, scope *Scope) []*Declarator {
@@ -2079,15 +2099,17 @@ func (n *InitDeclarator) check(ctx *context, ds *DeclarationSpecifier, sc []int,
 		if ds.IsTypedef() || ds.IsExtern() {
 			panic(ctx.position(n)) // error
 		}
+		n.Declarator.Initializer = n.Initializer
 		n.Declarator.check(ctx, ds, ds.typ(ctx), true, sc, fn)
 		n.Initializer.check(ctx, n.Declarator.Type, fn, false, nil)
-		ex := n.Declarator.Scope.Idents[n.Declarator.Name()].(*Declarator)
-		switch {
-		case ex.Initializer == nil:
-			ex.Initializer = n.Initializer
-		default:
-			if n.Initializer != nil {
-				panic(ctx.position(n)) // More than one initializer
+		if ex := n.Declarator.Scope.Idents[n.Declarator.Name()].(*Declarator); ex != nil && ex != n.Declarator {
+			switch {
+			case ex.Initializer == nil:
+				ex.Initializer = n.Initializer
+			default:
+				if n.Initializer != nil {
+					panic(fmt.Errorf("%v: existing initializer at %v", ctx.position(n), ctx.position(ex))) // More than one initializer
+				}
 			}
 		}
 	default:

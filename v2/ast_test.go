@@ -105,6 +105,8 @@ func ExampleBlockItem_decl() {
 	// Output:
 	// &cc.BlockItem{
 	// · Declaration: &cc.Declaration{
+	// · · Scope: &cc.Scope{
+	// · · },
 	// · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · Case: 1,
 	// · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -135,8 +137,7 @@ func ExampleBlockItem_decl() {
 	// · · · · · Case: 1,
 	// · · · · · Declarator: &cc.Declarator{
 	// · · · · · · Linkage: LinkageNone,
-	// · · · · · · Scope: &cc.Scope{
-	// · · · · · · },
+	// · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · Case: DirectDeclaratorArray,
@@ -184,6 +185,8 @@ func ExampleBlockItemList_case0() {
 	// &cc.BlockItemList{
 	// · BlockItem: &cc.BlockItem{
 	// · · Declaration: &cc.Declaration{
+	// · · · Scope: &cc.Scope{
+	// · · · },
 	// · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · Case: 1,
 	// · · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -214,8 +217,7 @@ func ExampleBlockItemList_case0() {
 	// · · · · · · Case: 1,
 	// · · · · · · Declarator: &cc.Declarator{
 	// · · · · · · · Linkage: LinkageNone,
-	// · · · · · · · Scope: &cc.Scope{
-	// · · · · · · · },
+	// · · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · · Case: DirectDeclaratorArray,
@@ -250,6 +252,8 @@ func ExampleBlockItemList_case1() {
 	// &cc.BlockItemList{
 	// · BlockItem: &cc.BlockItem{
 	// · · Declaration: &cc.Declaration{
+	// · · · Scope: &cc.Scope{
+	// · · · },
 	// · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · Case: 1,
 	// · · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -280,8 +284,7 @@ func ExampleBlockItemList_case1() {
 	// · · · · · · Case: 1,
 	// · · · · · · Declarator: &cc.Declarator{
 	// · · · · · · · Linkage: LinkageNone,
-	// · · · · · · · Scope: &cc.Scope{
-	// · · · · · · · },
+	// · · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · · Case: DirectDeclaratorArray,
@@ -335,6 +338,8 @@ func ExampleBlockItemListOpt_case1() {
 	// · BlockItemList: &cc.BlockItemList{
 	// · · BlockItem: &cc.BlockItem{
 	// · · · Declaration: &cc.Declaration{
+	// · · · · Scope: &cc.Scope{
+	// · · · · },
 	// · · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · · Case: 1,
 	// · · · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -365,8 +370,7 @@ func ExampleBlockItemListOpt_case1() {
 	// · · · · · · · Case: 1,
 	// · · · · · · · Declarator: &cc.Declarator{
 	// · · · · · · · · Linkage: LinkageNone,
-	// · · · · · · · · Scope: &cc.Scope{
-	// · · · · · · · · },
+	// · · · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · · · Case: DirectDeclaratorArray,
@@ -430,6 +434,8 @@ func ExampleCompoundStmt_case0() {
 	// · · BlockItemList: &cc.BlockItemList{
 	// · · · BlockItem: &cc.BlockItem{
 	// · · · · Declaration: &cc.Declaration{
+	// · · · · · Scope: &cc.Scope{
+	// · · · · · },
 	// · · · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · · · Case: 1,
 	// · · · · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -460,8 +466,7 @@ func ExampleCompoundStmt_case0() {
 	// · · · · · · · · Case: 1,
 	// · · · · · · · · Declarator: &cc.Declarator{
 	// · · · · · · · · · Linkage: LinkageNone,
-	// · · · · · · · · · Scope: &cc.Scope{
-	// · · · · · · · · · },
+	// · · · · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · · · · Case: DirectDeclaratorArray,
@@ -551,6 +556,7 @@ func ExampleDeclarationList_case1() {
 	// · DeclarationList: &cc.DeclarationList{
 	// · · Case: 1,
 	// · · Declaration: &cc.Declaration{
+	// · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · Case: 1,
 	// · · · · StorageClassSpecifier: &cc.StorageClassSpecifier{
@@ -2125,6 +2131,9 @@ func ExampleExternalDeclaration_func() {
 	// · · · · · BlockItemList: &cc.BlockItemList{
 	// · · · · · · BlockItem: &cc.BlockItem{
 	// · · · · · · · Declaration: &cc.Declaration{
+	// · · · · · · · · Scope: &cc.Scope{
+	// · · · · · · · · · Parent: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
+	// · · · · · · · · },
 	// · · · · · · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · · · · · · Case: 1,
 	// · · · · · · · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -2155,9 +2164,7 @@ func ExampleExternalDeclaration_func() {
 	// · · · · · · · · · · · Case: 1,
 	// · · · · · · · · · · · Declarator: &cc.Declarator{
 	// · · · · · · · · · · · · Linkage: LinkageNone,
-	// · · · · · · · · · · · · Scope: &cc.Scope{
-	// · · · · · · · · · · · · · Parent: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
-	// · · · · · · · · · · · · },
+	// · · · · · · · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · · · · · · · Case: DirectDeclaratorArray,
@@ -2230,6 +2237,7 @@ func ExampleExternalDeclarationList_case1() {
 	// · · Case: 1,
 	// · · ExternalDeclaration: &cc.ExternalDeclaration{
 	// · · · Declaration: &cc.Declaration{
+	// · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · · Case: 1,
 	// · · · · · StorageClassSpecifier: &cc.StorageClassSpecifier{
@@ -2252,6 +2260,8 @@ func ExampleFunctionBody_case0() {
 	// · · · BlockItemList: &cc.BlockItemList{
 	// · · · · BlockItem: &cc.BlockItem{
 	// · · · · · Declaration: &cc.Declaration{
+	// · · · · · · Scope: &cc.Scope{
+	// · · · · · · },
 	// · · · · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · · · · Case: 1,
 	// · · · · · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -2282,8 +2292,7 @@ func ExampleFunctionBody_case0() {
 	// · · · · · · · · · Case: 1,
 	// · · · · · · · · · Declarator: &cc.Declarator{
 	// · · · · · · · · · · Linkage: LinkageNone,
-	// · · · · · · · · · · Scope: &cc.Scope{
-	// · · · · · · · · · · },
+	// · · · · · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · · · · · Case: DirectDeclaratorArray,
@@ -2342,6 +2351,9 @@ func ExampleFunctionDefinition_spec() {
 	// · · · · BlockItemList: &cc.BlockItemList{
 	// · · · · · BlockItem: &cc.BlockItem{
 	// · · · · · · Declaration: &cc.Declaration{
+	// · · · · · · · Scope: &cc.Scope{
+	// · · · · · · · · Parent: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
+	// · · · · · · · },
 	// · · · · · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · · · · · Case: 1,
 	// · · · · · · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -2372,9 +2384,7 @@ func ExampleFunctionDefinition_spec() {
 	// · · · · · · · · · · Case: 1,
 	// · · · · · · · · · · Declarator: &cc.Declarator{
 	// · · · · · · · · · · · Linkage: LinkageNone,
-	// · · · · · · · · · · · Scope: &cc.Scope{
-	// · · · · · · · · · · · · Parent: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
-	// · · · · · · · · · · · },
+	// · · · · · · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · · · · · · Case: DirectDeclaratorArray,
@@ -2429,6 +2439,9 @@ func ExampleFunctionDefinition_int() {
 	// · · · · BlockItemList: &cc.BlockItemList{
 	// · · · · · BlockItem: &cc.BlockItem{
 	// · · · · · · Declaration: &cc.Declaration{
+	// · · · · · · · Scope: &cc.Scope{
+	// · · · · · · · · Parent: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
+	// · · · · · · · },
 	// · · · · · · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · · · · · · Case: 1,
 	// · · · · · · · · DeclarationSpecifiersOpt: &cc.DeclarationSpecifiersOpt{
@@ -2459,9 +2472,7 @@ func ExampleFunctionDefinition_int() {
 	// · · · · · · · · · · Case: 1,
 	// · · · · · · · · · · Declarator: &cc.Declarator{
 	// · · · · · · · · · · · Linkage: LinkageNone,
-	// · · · · · · · · · · · Scope: &cc.Scope{
-	// · · · · · · · · · · · · Parent: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
-	// · · · · · · · · · · · },
+	// · · · · · · · · · · · Scope: &cc.Scope{ /* recursive/repetitive pointee not shown */ },
 	// · · · · · · · · · · · StorageDuration: StorageDurationAutomatic,
 	// · · · · · · · · · · · DirectDeclarator: &cc.DirectDeclarator{
 	// · · · · · · · · · · · · Case: DirectDeclaratorArray,
@@ -2805,6 +2816,10 @@ func ExampleIterationStmt_forDecl() {
 	// &cc.IterationStmt{
 	// · Case: 1,
 	// · Declaration: &cc.Declaration{
+	// · · Scope: &cc.Scope{
+	// · · · Parent: &cc.Scope{
+	// · · · },
+	// · · },
 	// · · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
 	// · · · Case: 1,
 	// · · · StorageClassSpecifier: &cc.StorageClassSpecifier{

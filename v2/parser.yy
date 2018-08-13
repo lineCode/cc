@@ -358,7 +358,8 @@ import (
                         	Expr
 
                         // [0]6.7
-			//yy:field	Attributes		[][]xc.Token
+			//yy:field	Attributes	[][]xc.Token
+			//yy:field	Scope		*Scope
 			Declaration:
                         	DeclarationSpecifiers InitDeclaratorListOpt
 				{
@@ -366,6 +367,7 @@ import (
 				}
 				';'
 				{
+					lhs.Scope = lx.scope
 					if len(lx.attr2) != 0 {
 						lhs.Attributes = lx.attrs()
 					}
@@ -563,9 +565,6 @@ import (
                         	PointerOpt DirectDeclarator
 				{
 					lhs.Attributes = lx.attrs()
-					// if r := lhs.Attributes; len(r) != 0 {
-					// 	__yyfmt__.Printf("%v: %q %s\n", lx.position(lhs), dict.S(lhs.Name()), PrettyString(r)) //TODO- DBG
-					// }
 					lhs.Scope = lx.scope
 					if lx.scope.typedef {
 						delete(lx.scope.Idents, lhs.DirectDeclarator.nm())
@@ -781,12 +780,10 @@ import (
 /*yy:case Switch     */ |	"switch" '(' ExprList ')' Stmt
 
                         // [0]6.8.5
-			//yy:field	scope		*Scope
 /*yy:case Do         */ IterationStmt:
                         	"do" Stmt "while" '(' ExprList ')' ';'
 /*yy:case ForDecl    */ |	"for" '(' Declaration ExprListOpt ';' ExprListOpt ')' Stmt
 				{
-					lhs.scope = lx.scope
 					lx.popScope()
 				}
 /*yy:case For        */ |	"for" '(' ExprListOpt ';' ExprListOpt ';' ExprListOpt ')' Stmt
@@ -828,6 +825,9 @@ import (
 				DeclarationListOpt FunctionBody
 				{
 					lhs.Declarator.FunctionDefinition = lhs
+					if lx.scope.Parent != nil {
+						panic("internal error")
+					}
 				}
 /*yy:case Int        */ |	Declarator
 				{
@@ -840,6 +840,9 @@ import (
 				DeclarationListOpt FunctionBody
 				{
 					lhs.Declarator.FunctionDefinition = lhs
+					if lx.scope.Parent != nil {
+						panic("internal error")
+					}
 				}
 
 			FunctionBody:

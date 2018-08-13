@@ -391,6 +391,7 @@ func (n *ConstExpr) Pos() token.Pos {
 //	        DeclarationSpecifiers InitDeclaratorListOpt ';'  // Case 0
 type Declaration struct {
 	Attributes            [][]xc.Token
+	Scope                 *Scope
 	DeclarationSpecifiers *DeclarationSpecifiers
 	InitDeclaratorListOpt *InitDeclaratorListOpt
 	Token                 xc.Token
@@ -2200,7 +2201,6 @@ func (n IterationStmtCase) String() string {
 //	|       "for" '(' ExprListOpt ';' ExprListOpt ';' ExprListOpt ')' Stmt  // Case IterationStmtFor
 //	|       "while" '(' ExprList ')' Stmt                                   // Case IterationStmtWhile
 type IterationStmt struct {
-	scope        *Scope
 	Case         IterationStmtCase
 	Declaration  *Declaration
 	ExprList     *ExprList
