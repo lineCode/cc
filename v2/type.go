@@ -867,7 +867,8 @@ func (t *PointerType) IsCompatible(u Type) bool {
 		// result shall compare equal to the original pointer.
 		return t.Item == Void || x.Item == Void ||
 			ai != nil && ai.IsCompatible(x.Item) ||
-			underlyingType(t.Item, true).IsCompatible(underlyingType(x.Item, true))
+			underlyingType(t.Item, true).IsCompatible(underlyingType(x.Item, true)) ||
+			unsigned(t.Item) == unsigned(x.Item)
 	case *StructType:
 		return false
 	case TypeKind:
@@ -878,6 +879,23 @@ func (t *PointerType) IsCompatible(u Type) bool {
 		panic(fmt.Errorf("%T\n%v\n%v", x, t, u))
 	default:
 		panic(fmt.Errorf("%T\n%v\n%v", x, t, u))
+	}
+}
+
+func unsigned(t Type) TypeKind {
+	switch k := underlyingType(t, false).Kind(); k {
+	case Char, SChar:
+		return UChar
+	case Short:
+		return UShort
+	case Int:
+		return UInt
+	case Long:
+		return ULong
+	case LongLong:
+		return ULongLong
+	default:
+		return k
 	}
 }
 
@@ -931,6 +949,11 @@ func (t *PointerType) Kind() TypeKind { return Ptr }
 
 // assign implements Type.
 func (t *PointerType) assign(ctx *context, n Node, op Operand) (r Operand) {
+	u := UnderlyingType(t.Item)
+	var v Type
+	if op.Type.IsPointerType() {
+		v = UnderlyingType(UnderlyingType(op.Type).(*PointerType).Item)
+	}
 	// [0]6.5.16.1
 	switch {
 	// One of the following shall hold:
@@ -941,7 +964,8 @@ func (t *PointerType) assign(ctx *context, n Node, op Operand) (r Operand) {
 		// versions of compatible types, and the type pointed to by the
 		// left has all the qualifiers of the type pointed to by the
 		// right;
-		op.Type.IsPointerType() && t.IsCompatible(op.Type):
+		op.Type.IsPointerType() && t.IsCompatible(op.Type),
+		u.IsIntegerType() && v != nil && v.IsIntegerType() && ctx.model.Sizeof(u) == ctx.model.Sizeof(v) && u.IsUnsigned() == v.IsUnsigned():
 
 		return op.ConvertTo(ctx.model, t)
 	case
