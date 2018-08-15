@@ -142,7 +142,8 @@ type lexer struct {
 	t           *trigraphs
 	tc          *tokenPipe
 
-	typedef bool // Prev token returned was TYPEDEF_NAME
+	noTypedefName bool // Do not consider next token a TYPEDEF_NAME
+	typedef       bool // Prev token returned was TYPEDEF_NAME
 
 	ungetBuffer
 }
@@ -185,6 +186,8 @@ more:
 	lval.Token.Rune = l.toC(lval.Token.Rune, lval.Token.Val)
 	typedef := l.typedef
 	l.typedef = false
+	noTypedefName := l.noTypedefName
+	l.noTypedefName = false
 	switch lval.Token.Rune {
 	case NON_REPL:
 		lval.Token.Rune = IDENTIFIER
@@ -200,7 +203,7 @@ more:
 			goto more
 		}
 
-		if typedef || !followSetHasTypedefName[lval.yys] {
+		if noTypedefName || typedef || !followSetHasTypedefName[lval.yys] {
 			break
 		}
 

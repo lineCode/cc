@@ -443,7 +443,11 @@ import (
 				{
 					lhs.scope = lx.scope
 				}
-/*yy:case Empty      */ |	StructOrUnion IdentifierOpt '{' '}'
+/*yy:case Empty      */ |	StructOrUnion IdentifierOpt '{'
+				{
+					lx.noTypedefName = true // https://github.com/cznic/sqlite2go/issues/9
+				}
+				'}'
 				{
 					if !lx.tweaks.EnableEmptyStructs {
 						lx.err($1, "empty structs/unions not allowed")
@@ -453,7 +457,11 @@ import (
 				{
 					lx.newScope()
 				}
-				StructDeclarationList '}'
+				StructDeclarationList
+				{
+					lx.noTypedefName = true // https://github.com/cznic/sqlite2go/issues/9
+				}
+				'}'
 				{
 					lhs.scope, _ = lx.popScope()
 				}

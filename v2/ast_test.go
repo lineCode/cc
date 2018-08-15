@@ -11,7 +11,7 @@ import (
 )
 
 func ExampleAbstractDeclarator_pointer() {
-	fmt.Println(exampleAST(174, "\U00100000 ( _Bool * )"))
+	fmt.Println(exampleAST(176, "\U00100000 ( _Bool * )"))
 	// Output:
 	// &cc.AbstractDeclarator{
 	// · Pointer: &cc.Pointer{
@@ -21,7 +21,7 @@ func ExampleAbstractDeclarator_pointer() {
 }
 
 func ExampleAbstractDeclarator_abstract() {
-	fmt.Println(exampleAST(175, "\U00100000 ( _Bool ( ) )"))
+	fmt.Println(exampleAST(177, "\U00100000 ( _Bool ( ) )"))
 	// Output:
 	// &cc.AbstractDeclarator{
 	// · Case: 1,
@@ -34,13 +34,13 @@ func ExampleAbstractDeclarator_abstract() {
 }
 
 func ExampleAbstractDeclaratorOpt_case0() {
-	fmt.Println(exampleAST(176, "\U00100000 ( _Bool )") == (*AbstractDeclaratorOpt)(nil))
+	fmt.Println(exampleAST(178, "\U00100000 ( _Bool )") == (*AbstractDeclaratorOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleAbstractDeclaratorOpt_case1() {
-	fmt.Println(exampleAST(177, "\U00100000 ( _Bool * )"))
+	fmt.Println(exampleAST(179, "\U00100000 ( _Bool * )"))
 	// Output:
 	// &cc.AbstractDeclaratorOpt{
 	// · AbstractDeclarator: &cc.AbstractDeclarator{
@@ -101,7 +101,7 @@ func ExampleArgumentExprListOpt_case1() {
 }
 
 func ExampleBlockItem_decl() {
-	fmt.Println(exampleAST(215, "\U00100001 a { auto ; !"))
+	fmt.Println(exampleAST(217, "\U00100001 a { auto ; !"))
 	// Output:
 	// &cc.BlockItem{
 	// · Declaration: &cc.Declaration{
@@ -166,7 +166,7 @@ func ExampleBlockItem_decl() {
 }
 
 func ExampleBlockItem_stmt() {
-	fmt.Println(exampleAST(216, "\U00100001 a { ; !"))
+	fmt.Println(exampleAST(218, "\U00100001 a { ; !"))
 	// Output:
 	// &cc.BlockItem{
 	// · Case: 1,
@@ -180,7 +180,7 @@ func ExampleBlockItem_stmt() {
 }
 
 func ExampleBlockItemList_case0() {
-	fmt.Println(exampleAST(211, "\U00100001 a { ; !"))
+	fmt.Println(exampleAST(213, "\U00100001 a { ; !"))
 	// Output:
 	// &cc.BlockItemList{
 	// · BlockItem: &cc.BlockItem{
@@ -247,7 +247,7 @@ func ExampleBlockItemList_case0() {
 }
 
 func ExampleBlockItemList_case1() {
-	fmt.Println(exampleAST(212, "\U00100001 a { ; ; !"))
+	fmt.Println(exampleAST(214, "\U00100001 a { ; ; !"))
 	// Output:
 	// &cc.BlockItemList{
 	// · BlockItem: &cc.BlockItem{
@@ -326,13 +326,13 @@ func ExampleBlockItemList_case1() {
 }
 
 func ExampleBlockItemListOpt_case0() {
-	fmt.Println(exampleAST(213, "\U00100001 a { }") == (*BlockItemListOpt)(nil))
+	fmt.Println(exampleAST(215, "\U00100001 a { }") == (*BlockItemListOpt)(nil))
 	// Output:
 	// false
 }
 
 func ExampleBlockItemListOpt_case1() {
-	fmt.Println(exampleAST(214, "\U00100001 a { ; }"))
+	fmt.Println(exampleAST(216, "\U00100001 a { ; }"))
 	// Output:
 	// &cc.BlockItemListOpt{
 	// · BlockItemList: &cc.BlockItemList{
@@ -413,13 +413,13 @@ func ExampleBlockItemListOpt_case1() {
 }
 
 func ExampleCommaOpt_case0() {
-	fmt.Println(exampleAST(126, "\U00100000 ( _Bool ) { }") == (*CommaOpt)(nil))
+	fmt.Println(exampleAST(128, "\U00100000 ( _Bool ) { }") == (*CommaOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleCommaOpt_case1() {
-	fmt.Println(exampleAST(127, "\U00100000 ( _Bool ) { , }"))
+	fmt.Println(exampleAST(129, "\U00100000 ( _Bool ) { , }"))
 	// Output:
 	// &cc.CommaOpt{
 	// · Token: ',',
@@ -427,7 +427,7 @@ func ExampleCommaOpt_case1() {
 }
 
 func ExampleCompoundStmt_case0() {
-	fmt.Println(exampleAST(210, "\U00100001 a { }"))
+	fmt.Println(exampleAST(212, "\U00100001 a { }"))
 	// Output:
 	// &cc.CompoundStmt{
 	// · BlockItemListOpt: &cc.BlockItemListOpt{
@@ -525,7 +525,7 @@ func ExampleDeclaration_case0() {
 }
 
 func ExampleDeclarationList_case0() {
-	fmt.Println(exampleAST(239, "\U00100001 a auto ; {"))
+	fmt.Println(exampleAST(241, "\U00100001 a auto ; {"))
 	// Output:
 	// &cc.DeclarationList{
 	// · Declaration: &cc.Declaration{
@@ -541,7 +541,7 @@ func ExampleDeclarationList_case0() {
 }
 
 func ExampleDeclarationList_case1() {
-	fmt.Println(exampleAST(240, "\U00100001 a auto ; auto ; {"))
+	fmt.Println(exampleAST(242, "\U00100001 a auto ; auto ; {"))
 	// Output:
 	// &cc.DeclarationList{
 	// · Declaration: &cc.Declaration{
@@ -570,13 +570,13 @@ func ExampleDeclarationList_case1() {
 }
 
 func ExampleDeclarationListOpt_case0() {
-	fmt.Println(exampleAST(241, "\U00100001 a {") == (*DeclarationListOpt)(nil))
+	fmt.Println(exampleAST(243, "\U00100001 a {") == (*DeclarationListOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleDeclarationListOpt_case1() {
-	fmt.Println(exampleAST(242, "\U00100001 a auto ; {"))
+	fmt.Println(exampleAST(244, "\U00100001 a auto ; {"))
 	// Output:
 	// &cc.DeclarationListOpt{
 	// · DeclarationList: &cc.DeclarationList{
@@ -656,7 +656,7 @@ func ExampleDeclarationSpecifiersOpt_case1() {
 }
 
 func ExampleDeclarator_case0() {
-	fmt.Println(exampleAST(138, "\U00100001 a )"))
+	fmt.Println(exampleAST(140, "\U00100001 a )"))
 	// Output:
 	// &cc.Declarator{
 	// · Linkage: LinkageNone,
@@ -669,13 +669,13 @@ func ExampleDeclarator_case0() {
 }
 
 func ExampleDeclaratorOpt_case0() {
-	fmt.Println(exampleAST(139, "\U00100001 struct { _Bool :") == (*DeclaratorOpt)(nil))
+	fmt.Println(exampleAST(141, "\U00100001 struct { _Bool :") == (*DeclaratorOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleDeclaratorOpt_case1() {
-	fmt.Println(exampleAST(140, "\U00100001 struct { _Bool a :"))
+	fmt.Println(exampleAST(142, "\U00100001 struct { _Bool a :"))
 	// Output:
 	// &cc.DeclaratorOpt{
 	// · Declarator: &cc.Declarator{
@@ -692,7 +692,7 @@ func ExampleDeclaratorOpt_case1() {
 }
 
 func ExampleDesignation_case0() {
-	fmt.Println(exampleAST(195, "\U00100001 auto a = { . b = !"))
+	fmt.Println(exampleAST(197, "\U00100001 auto a = { . b = !"))
 	// Output:
 	// &cc.Designation{
 	// · DesignatorList: &cc.DesignatorList{
@@ -706,7 +706,7 @@ func ExampleDesignation_case0() {
 }
 
 func ExampleDesignator_field() {
-	fmt.Println(exampleAST(198, "\U00100001 auto a = { . b ."))
+	fmt.Println(exampleAST(200, "\U00100001 auto a = { . b ."))
 	// Output:
 	// &cc.Designator{
 	// · Token: '.',
@@ -715,7 +715,7 @@ func ExampleDesignator_field() {
 }
 
 func ExampleDesignator_index() {
-	fmt.Println(exampleAST(199, "\U00100001 auto a = { [ 'b' ] ."))
+	fmt.Println(exampleAST(201, "\U00100001 auto a = { [ 'b' ] ."))
 	// Output:
 	// &cc.Designator{
 	// · Case: 1,
@@ -731,18 +731,18 @@ func ExampleDesignator_index() {
 }
 
 func ExampleDesignatorList_case0() {
-	fmt.Println(exampleAST(196, "\U00100000 ( _Bool ) { . a ."))
+	fmt.Println(exampleAST(198, "\U00100001 auto a = { . b ."))
 	// Output:
 	// &cc.DesignatorList{
 	// · Designator: &cc.Designator{
 	// · · Token: '.',
-	// · · Token2: IDENTIFIER "a",
+	// · · Token2: IDENTIFIER "b",
 	// · },
 	// }
 }
 
 func ExampleDesignatorList_case1() {
-	fmt.Println(exampleAST(197, "\U00100001 auto a = { . b . c ."))
+	fmt.Println(exampleAST(199, "\U00100001 auto a = { . b . c ."))
 	// Output:
 	// &cc.DesignatorList{
 	// · Designator: &cc.Designator{
@@ -760,7 +760,7 @@ func ExampleDesignatorList_case1() {
 }
 
 func ExampleDirectAbstractDeclarator_abstract() {
-	fmt.Println(exampleAST(178, "\U00100000 ( _Bool ( * ) ("))
+	fmt.Println(exampleAST(180, "\U00100000 ( _Bool ( * ) ("))
 	// Output:
 	// &cc.DirectAbstractDeclarator{
 	// · AbstractDeclarator: &cc.AbstractDeclarator{
@@ -774,7 +774,7 @@ func ExampleDirectAbstractDeclarator_abstract() {
 }
 
 func ExampleDirectAbstractDeclarator_paramList() {
-	fmt.Println(exampleAST(179, "\U00100000 ( _Bool ( ) ("))
+	fmt.Println(exampleAST(181, "\U00100000 ( _Bool ( ) ("))
 	// Output:
 	// &cc.DirectAbstractDeclarator{
 	// · Case: 1,
@@ -784,7 +784,7 @@ func ExampleDirectAbstractDeclarator_paramList() {
 }
 
 func ExampleDirectAbstractDeclarator_dFn() {
-	fmt.Println(exampleAST(180, "\U00100000 ( _Bool ( ) ( ) ("))
+	fmt.Println(exampleAST(182, "\U00100000 ( _Bool ( ) ( ) ("))
 	// Output:
 	// &cc.DirectAbstractDeclarator{
 	// · Case: 2,
@@ -799,7 +799,7 @@ func ExampleDirectAbstractDeclarator_dFn() {
 }
 
 func ExampleDirectAbstractDeclarator_dArrSize() {
-	fmt.Println(exampleAST(181, "\U00100000 ( _Bool [ static 'a' ] ("))
+	fmt.Println(exampleAST(183, "\U00100000 ( _Bool [ static 'a' ] ("))
 	// Output:
 	// &cc.DirectAbstractDeclarator{
 	// · Case: 3,
@@ -814,7 +814,7 @@ func ExampleDirectAbstractDeclarator_dArrSize() {
 }
 
 func ExampleDirectAbstractDeclarator_dArrVL() {
-	fmt.Println(exampleAST(182, "\U00100000 ( _Bool [ * ] ("))
+	fmt.Println(exampleAST(184, "\U00100000 ( _Bool [ * ] ("))
 	// Output:
 	// &cc.DirectAbstractDeclarator{
 	// · Case: 4,
@@ -825,7 +825,7 @@ func ExampleDirectAbstractDeclarator_dArrVL() {
 }
 
 func ExampleDirectAbstractDeclarator_dArr() {
-	fmt.Println(exampleAST(183, "\U00100000 ( _Bool [ ] ("))
+	fmt.Println(exampleAST(185, "\U00100000 ( _Bool [ ] ("))
 	// Output:
 	// &cc.DirectAbstractDeclarator{
 	// · Case: 5,
@@ -835,7 +835,7 @@ func ExampleDirectAbstractDeclarator_dArr() {
 }
 
 func ExampleDirectAbstractDeclarator_dArrSize2() {
-	fmt.Println(exampleAST(184, "\U00100000 ( _Bool [ const static 'a' ] ("))
+	fmt.Println(exampleAST(186, "\U00100000 ( _Bool [ const static 'a' ] ("))
 	// Output:
 	// &cc.DirectAbstractDeclarator{
 	// · Case: 6,
@@ -855,7 +855,7 @@ func ExampleDirectAbstractDeclarator_dArrSize2() {
 }
 
 func ExampleDirectAbstractDeclarator_dArr2() {
-	fmt.Println(exampleAST(185, "\U00100000 ( _Bool [ const ] ("))
+	fmt.Println(exampleAST(187, "\U00100000 ( _Bool [ const ] ("))
 	// Output:
 	// &cc.DirectAbstractDeclarator{
 	// · Case: 7,
@@ -870,13 +870,13 @@ func ExampleDirectAbstractDeclarator_dArr2() {
 }
 
 func ExampleDirectAbstractDeclaratorOpt_case0() {
-	fmt.Println(exampleAST(186, "\U00100000 ( _Bool [") == (*DirectAbstractDeclaratorOpt)(nil))
+	fmt.Println(exampleAST(188, "\U00100000 ( _Bool [") == (*DirectAbstractDeclaratorOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleDirectAbstractDeclaratorOpt_case1() {
-	fmt.Println(exampleAST(187, "\U00100000 ( _Bool ( ) ["))
+	fmt.Println(exampleAST(189, "\U00100000 ( _Bool ( ) ["))
 	// Output:
 	// &cc.DirectAbstractDeclaratorOpt{
 	// · DirectAbstractDeclarator: &cc.DirectAbstractDeclarator{
@@ -888,7 +888,7 @@ func ExampleDirectAbstractDeclaratorOpt_case1() {
 }
 
 func ExampleDirectDeclarator_paren() {
-	fmt.Println(exampleAST(141, "\U00100001 ( a ) ("))
+	fmt.Println(exampleAST(143, "\U00100001 ( a ) ("))
 	// Output:
 	// &cc.DirectDeclarator{
 	// · Case: DirectDeclaratorParen,
@@ -907,7 +907,7 @@ func ExampleDirectDeclarator_paren() {
 }
 
 func ExampleDirectDeclarator_identList() {
-	fmt.Println(exampleAST(143, "\U00100001 a ( ) ("))
+	fmt.Println(exampleAST(145, "\U00100001 a ( ) ("))
 	// Output:
 	// &cc.DirectDeclarator{
 	// · Case: DirectDeclaratorIdentList,
@@ -921,7 +921,7 @@ func ExampleDirectDeclarator_identList() {
 }
 
 func ExampleDirectDeclarator_paramList() {
-	fmt.Println(exampleAST(145, "\U00100001 a ( auto ) ("))
+	fmt.Println(exampleAST(147, "\U00100001 a ( auto ) ("))
 	// Output:
 	// &cc.DirectDeclarator{
 	// · Case: DirectDeclaratorParamList,
@@ -947,7 +947,7 @@ func ExampleDirectDeclarator_paramList() {
 }
 
 func ExampleDirectDeclarator_arraySize() {
-	fmt.Println(exampleAST(146, "\U00100001 a [ static 'b' ] ("))
+	fmt.Println(exampleAST(148, "\U00100001 a [ static 'b' ] ("))
 	// Output:
 	// &cc.DirectDeclarator{
 	// · Case: DirectDeclaratorArraySize,
@@ -966,7 +966,7 @@ func ExampleDirectDeclarator_arraySize() {
 }
 
 func ExampleDirectDeclarator_arraySize2() {
-	fmt.Println(exampleAST(147, "\U00100001 a [ const static 'b' ] ("))
+	fmt.Println(exampleAST(149, "\U00100001 a [ const static 'b' ] ("))
 	// Output:
 	// &cc.DirectDeclarator{
 	// · Case: DirectDeclaratorArraySize2,
@@ -990,7 +990,7 @@ func ExampleDirectDeclarator_arraySize2() {
 }
 
 func ExampleDirectDeclarator_arrayVar() {
-	fmt.Println(exampleAST(148, "\U00100001 a [ * ] ("))
+	fmt.Println(exampleAST(150, "\U00100001 a [ * ] ("))
 	// Output:
 	// &cc.DirectDeclarator{
 	// · Case: DirectDeclaratorArrayVar,
@@ -1005,7 +1005,7 @@ func ExampleDirectDeclarator_arrayVar() {
 }
 
 func ExampleDirectDeclarator_array() {
-	fmt.Println(exampleAST(149, "\U00100001 a [ ] ("))
+	fmt.Println(exampleAST(151, "\U00100001 a [ ] ("))
 	// Output:
 	// &cc.DirectDeclarator{
 	// · Case: DirectDeclaratorArray,
@@ -1019,7 +1019,7 @@ func ExampleDirectDeclarator_array() {
 }
 
 func ExampleDirectDeclarator_ident() {
-	fmt.Println(exampleAST(150, "\U00100001 a ("))
+	fmt.Println(exampleAST(152, "\U00100001 a ("))
 	// Output:
 	// &cc.DirectDeclarator{
 	// · Case: DirectDeclaratorIdent,
@@ -1028,7 +1028,7 @@ func ExampleDirectDeclarator_ident() {
 }
 
 func ExampleEnumSpecifier_tag() {
-	fmt.Println(exampleAST(128, "\U00100001 enum a ("))
+	fmt.Println(exampleAST(130, "\U00100001 enum a ("))
 	// Output:
 	// &cc.EnumSpecifier{
 	// · Token: ENUM "enum",
@@ -1037,7 +1037,7 @@ func ExampleEnumSpecifier_tag() {
 }
 
 func ExampleEnumSpecifier_define() {
-	fmt.Println(exampleAST(129, "\U00100001 enum { a } ("))
+	fmt.Println(exampleAST(131, "\U00100001 enum { a } ("))
 	// Output:
 	// &cc.EnumSpecifier{
 	// · Case: 1,
@@ -1063,7 +1063,7 @@ func ExampleEnumerationConstant_case0() {
 }
 
 func ExampleEnumerator_base() {
-	fmt.Println(exampleAST(132, "\U00100001 enum { a ,"))
+	fmt.Println(exampleAST(134, "\U00100001 enum { a ,"))
 	// Output:
 	// &cc.Enumerator{
 	// · EnumerationConstant: &cc.EnumerationConstant{
@@ -1073,7 +1073,7 @@ func ExampleEnumerator_base() {
 }
 
 func ExampleEnumerator_init() {
-	fmt.Println(exampleAST(133, "\U00100001 enum { a = 'b' ,"))
+	fmt.Println(exampleAST(135, "\U00100001 enum { a = 'b' ,"))
 	// Output:
 	// &cc.Enumerator{
 	// · Case: 1,
@@ -1091,7 +1091,7 @@ func ExampleEnumerator_init() {
 }
 
 func ExampleEnumeratorList_case0() {
-	fmt.Println(exampleAST(130, "\U00100001 enum { a ,"))
+	fmt.Println(exampleAST(132, "\U00100001 enum { a ,"))
 	// Output:
 	// &cc.EnumeratorList{
 	// · Enumerator: &cc.Enumerator{
@@ -1103,7 +1103,7 @@ func ExampleEnumeratorList_case0() {
 }
 
 func ExampleEnumeratorList_case1() {
-	fmt.Println(exampleAST(131, "\U00100001 enum { a , b ,"))
+	fmt.Println(exampleAST(133, "\U00100001 enum { a , b ,"))
 	// Output:
 	// &cc.EnumeratorList{
 	// · Enumerator: &cc.Enumerator{
@@ -2086,7 +2086,7 @@ func ExampleExprOpt_case1() {
 }
 
 func ExampleExprStmt_case0() {
-	fmt.Println(exampleAST(217, "\U00100001 a { ; !"))
+	fmt.Println(exampleAST(219, "\U00100001 a { ; !"))
 	// Output:
 	// &cc.ExprStmt{
 	// · Token: ';',
@@ -2094,7 +2094,7 @@ func ExampleExprStmt_case0() {
 }
 
 func ExampleExternalDeclaration_decl() {
-	fmt.Println(exampleAST(231, "\U00100001 auto ;"))
+	fmt.Println(exampleAST(233, "\U00100001 auto ;"))
 	// Output:
 	// &cc.ExternalDeclaration{
 	// · Declaration: &cc.Declaration{
@@ -2110,7 +2110,7 @@ func ExampleExternalDeclaration_decl() {
 }
 
 func ExampleExternalDeclaration_func() {
-	fmt.Println(exampleAST(232, "\U00100001 a { }"))
+	fmt.Println(exampleAST(234, "\U00100001 a { }"))
 	// Output:
 	// &cc.ExternalDeclaration{
 	// · Case: 1,
@@ -2201,7 +2201,7 @@ func ExampleExternalDeclaration_func() {
 }
 
 func ExampleExternalDeclarationList_case0() {
-	fmt.Println(exampleAST(229, "\U00100001 auto ;"))
+	fmt.Println(exampleAST(231, "\U00100001 auto ;"))
 	// Output:
 	// &cc.ExternalDeclarationList{
 	// · ExternalDeclaration: &cc.ExternalDeclaration{
@@ -2219,7 +2219,7 @@ func ExampleExternalDeclarationList_case0() {
 }
 
 func ExampleExternalDeclarationList_case1() {
-	fmt.Println(exampleAST(230, "\U00100001 auto ; auto ;"))
+	fmt.Println(exampleAST(232, "\U00100001 auto ; auto ;"))
 	// Output:
 	// &cc.ExternalDeclarationList{
 	// · ExternalDeclaration: &cc.ExternalDeclaration{
@@ -2252,7 +2252,7 @@ func ExampleExternalDeclarationList_case1() {
 }
 
 func ExampleFunctionBody_case0() {
-	fmt.Println(exampleAST(238, "\U00100001 a { }"))
+	fmt.Println(exampleAST(240, "\U00100001 a { }"))
 	// Output:
 	// &cc.FunctionBody{
 	// · CompoundStmt: &cc.CompoundStmt{
@@ -2327,7 +2327,7 @@ func ExampleFunctionBody_case0() {
 }
 
 func ExampleFunctionDefinition_spec() {
-	fmt.Println(exampleAST(234, "\U00100001 auto a { }"))
+	fmt.Println(exampleAST(236, "\U00100001 auto a { }"))
 	// Output:
 	// &cc.FunctionDefinition{
 	// · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
@@ -2420,7 +2420,7 @@ func ExampleFunctionDefinition_spec() {
 }
 
 func ExampleFunctionDefinition_int() {
-	fmt.Println(exampleAST(236, "\U00100001 a { }"))
+	fmt.Println(exampleAST(238, "\U00100001 a { }"))
 	// Output:
 	// &cc.FunctionDefinition{
 	// · Case: 1,
@@ -2508,7 +2508,7 @@ func ExampleFunctionDefinition_int() {
 }
 
 func ExampleFunctionSpecifier_case0() {
-	fmt.Println(exampleAST(137, "\U00100001 inline ("))
+	fmt.Println(exampleAST(139, "\U00100001 inline ("))
 	// Output:
 	// &cc.FunctionSpecifier{
 	// · Token: INLINE "inline",
@@ -2516,7 +2516,7 @@ func ExampleFunctionSpecifier_case0() {
 }
 
 func ExampleIdentifierList_case0() {
-	fmt.Println(exampleAST(167, "\U00100001 a ( b )"))
+	fmt.Println(exampleAST(169, "\U00100001 a ( b )"))
 	// Output:
 	// &cc.IdentifierList{
 	// · Token: IDENTIFIER "b",
@@ -2524,7 +2524,7 @@ func ExampleIdentifierList_case0() {
 }
 
 func ExampleIdentifierList_case1() {
-	fmt.Println(exampleAST(168, "\U00100001 a ( b , c )"))
+	fmt.Println(exampleAST(170, "\U00100001 a ( b , c )"))
 	// Output:
 	// &cc.IdentifierList{
 	// · IdentifierList: &cc.IdentifierList{
@@ -2537,13 +2537,13 @@ func ExampleIdentifierList_case1() {
 }
 
 func ExampleIdentifierListOpt_case0() {
-	fmt.Println(exampleAST(169, "\U00100001 a ( )") == (*IdentifierListOpt)(nil))
+	fmt.Println(exampleAST(171, "\U00100001 a ( )") == (*IdentifierListOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleIdentifierListOpt_case1() {
-	fmt.Println(exampleAST(170, "\U00100001 a ( b )"))
+	fmt.Println(exampleAST(172, "\U00100001 a ( b )"))
 	// Output:
 	// &cc.IdentifierListOpt{
 	// · IdentifierList: &cc.IdentifierList{
@@ -2553,13 +2553,13 @@ func ExampleIdentifierListOpt_case1() {
 }
 
 func ExampleIdentifierOpt_case0() {
-	fmt.Println(exampleAST(171, "\U00100001 struct {") == (*IdentifierOpt)(nil))
+	fmt.Println(exampleAST(173, "\U00100001 struct {") == (*IdentifierOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleIdentifierOpt_case1() {
-	fmt.Println(exampleAST(172, "\U00100001 enum a {"))
+	fmt.Println(exampleAST(174, "\U00100001 enum a {"))
 	// Output:
 	// &cc.IdentifierOpt{
 	// · Token: IDENTIFIER "a",
@@ -2680,7 +2680,7 @@ func ExampleInitDeclaratorListOpt_case1() {
 }
 
 func ExampleInitializer_compLit() {
-	fmt.Println(exampleAST(188, "\U00100001 auto a = { } ,"))
+	fmt.Println(exampleAST(190, "\U00100001 auto a = { } ,"))
 	// Output:
 	// &cc.Initializer{
 	// · Token: '{',
@@ -2689,7 +2689,7 @@ func ExampleInitializer_compLit() {
 }
 
 func ExampleInitializer_expr() {
-	fmt.Println(exampleAST(189, "\U00100001 auto a = 'b' ,"))
+	fmt.Println(exampleAST(191, "\U00100001 auto a = 'b' ,"))
 	// Output:
 	// &cc.Initializer{
 	// · Case: 1,
@@ -2701,13 +2701,13 @@ func ExampleInitializer_expr() {
 }
 
 func ExampleInitializerList_case0() {
-	fmt.Println(exampleAST(190, "\U00100000 ( _Bool ) { ,") == (*InitializerList)(nil))
+	fmt.Println(exampleAST(192, "\U00100000 ( _Bool ) { ,") == (*InitializerList)(nil))
 	// Output:
 	// true
 }
 
 func ExampleInitializerList_case1() {
-	fmt.Println(exampleAST(191, "\U00100000 ( _Bool ) { 'a' ,"))
+	fmt.Println(exampleAST(193, "\U00100000 ( _Bool ) { 'a' ,"))
 	// Output:
 	// &cc.InitializerList{
 	// · Case: 1,
@@ -2722,7 +2722,7 @@ func ExampleInitializerList_case1() {
 }
 
 func ExampleInitializerList_case2() {
-	fmt.Println(exampleAST(192, "\U00100000 ( _Bool ) { . a = 'b' ,"))
+	fmt.Println(exampleAST(194, "\U00100000 ( _Bool ) { . a = 'b' ,"))
 	// Output:
 	// &cc.InitializerList{
 	// · Case: 2,
@@ -2746,7 +2746,7 @@ func ExampleInitializerList_case2() {
 }
 
 func ExampleInitializerList_case3() {
-	fmt.Println(exampleAST(193, "\U00100000 ( _Bool ) { , 'a' ,"))
+	fmt.Println(exampleAST(195, "\U00100000 ( _Bool ) { , 'a' ,"))
 	// Output:
 	// &cc.InitializerList{
 	// · Case: 3,
@@ -2762,7 +2762,7 @@ func ExampleInitializerList_case3() {
 }
 
 func ExampleInitializerList_case4() {
-	fmt.Println(exampleAST(194, "\U00100000 ( _Bool ) { , . a = 'b' ,"))
+	fmt.Println(exampleAST(196, "\U00100000 ( _Bool ) { , . a = 'b' ,"))
 	// Output:
 	// &cc.InitializerList{
 	// · Case: 4,
@@ -2787,7 +2787,7 @@ func ExampleInitializerList_case4() {
 }
 
 func ExampleIterationStmt_do() {
-	fmt.Println(exampleAST(221, "\U00100001 a { do ; while ( 'b' ) ; !"))
+	fmt.Println(exampleAST(223, "\U00100001 a { do ; while ( 'b' ) ; !"))
 	// Output:
 	// &cc.IterationStmt{
 	// · ExprList: &cc.ExprList{
@@ -2811,7 +2811,7 @@ func ExampleIterationStmt_do() {
 }
 
 func ExampleIterationStmt_forDecl() {
-	fmt.Println(exampleAST(222, "\U00100001 a { for ( auto ; ; ) ; !"))
+	fmt.Println(exampleAST(224, "\U00100001 a { for ( auto ; ; ) ; !"))
 	// Output:
 	// &cc.IterationStmt{
 	// · Case: 1,
@@ -2842,7 +2842,7 @@ func ExampleIterationStmt_forDecl() {
 }
 
 func ExampleIterationStmt_for() {
-	fmt.Println(exampleAST(223, "\U00100001 a { for ( ; ; ) ; !"))
+	fmt.Println(exampleAST(225, "\U00100001 a { for ( ; ; ) ; !"))
 	// Output:
 	// &cc.IterationStmt{
 	// · Case: 2,
@@ -2861,7 +2861,7 @@ func ExampleIterationStmt_for() {
 }
 
 func ExampleIterationStmt_while() {
-	fmt.Println(exampleAST(224, "\U00100001 a { while ( 'b' ) ; !"))
+	fmt.Println(exampleAST(226, "\U00100001 a { while ( 'b' ) ; !"))
 	// Output:
 	// &cc.IterationStmt{
 	// · Case: 3,
@@ -2884,7 +2884,7 @@ func ExampleIterationStmt_while() {
 }
 
 func ExampleJumpStmt_break() {
-	fmt.Println(exampleAST(225, "\U00100001 a { break ; !"))
+	fmt.Println(exampleAST(227, "\U00100001 a { break ; !"))
 	// Output:
 	// &cc.JumpStmt{
 	// · Token: BREAK "break",
@@ -2893,7 +2893,7 @@ func ExampleJumpStmt_break() {
 }
 
 func ExampleJumpStmt_continue() {
-	fmt.Println(exampleAST(226, "\U00100001 a { continue ; !"))
+	fmt.Println(exampleAST(228, "\U00100001 a { continue ; !"))
 	// Output:
 	// &cc.JumpStmt{
 	// · Case: 1,
@@ -2903,7 +2903,7 @@ func ExampleJumpStmt_continue() {
 }
 
 func ExampleJumpStmt_goto() {
-	fmt.Println(exampleAST(227, "\U00100001 a { goto b ; !"))
+	fmt.Println(exampleAST(229, "\U00100001 a { goto b ; !"))
 	// Output:
 	// &cc.JumpStmt{
 	// · Case: 2,
@@ -2914,7 +2914,7 @@ func ExampleJumpStmt_goto() {
 }
 
 func ExampleJumpStmt_return() {
-	fmt.Println(exampleAST(228, "\U00100001 a { return ; !"))
+	fmt.Println(exampleAST(230, "\U00100001 a { return ; !"))
 	// Output:
 	// &cc.JumpStmt{
 	// · Case: 3,
@@ -2924,7 +2924,7 @@ func ExampleJumpStmt_return() {
 }
 
 func ExampleLabeledStmt_switchCase() {
-	fmt.Println(exampleAST(206, "\U00100001 a { case 'b' : ; !"))
+	fmt.Println(exampleAST(208, "\U00100001 a { case 'b' : ; !"))
 	// Output:
 	// &cc.LabeledStmt{
 	// · ConstExpr: &cc.ConstExpr{
@@ -2945,7 +2945,7 @@ func ExampleLabeledStmt_switchCase() {
 }
 
 func ExampleLabeledStmt_default() {
-	fmt.Println(exampleAST(207, "\U00100001 a { default : ; !"))
+	fmt.Println(exampleAST(209, "\U00100001 a { default : ; !"))
 	// Output:
 	// &cc.LabeledStmt{
 	// · Case: 1,
@@ -2961,7 +2961,7 @@ func ExampleLabeledStmt_default() {
 }
 
 func ExampleLabeledStmt_label() {
-	fmt.Println(exampleAST(208, "\U00100001 a { b : ; !"))
+	fmt.Println(exampleAST(210, "\U00100001 a { b : ; !"))
 	// Output:
 	// &cc.LabeledStmt{
 	// · Case: 2,
@@ -2977,7 +2977,7 @@ func ExampleLabeledStmt_label() {
 }
 
 func ExampleParameterDeclaration_abstract() {
-	fmt.Println(exampleAST(165, "\U00100001 a ( auto )"))
+	fmt.Println(exampleAST(167, "\U00100001 a ( auto )"))
 	// Output:
 	// &cc.ParameterDeclaration{
 	// · DeclarationSpecifiers: &cc.DeclarationSpecifiers{
@@ -2990,7 +2990,7 @@ func ExampleParameterDeclaration_abstract() {
 }
 
 func ExampleParameterDeclaration_declarator() {
-	fmt.Println(exampleAST(166, "\U00100001 a ( auto b )"))
+	fmt.Println(exampleAST(168, "\U00100001 a ( auto b )"))
 	// Output:
 	// &cc.ParameterDeclaration{
 	// · Case: 1,
@@ -3014,7 +3014,7 @@ func ExampleParameterDeclaration_declarator() {
 }
 
 func ExampleParameterList_case0() {
-	fmt.Println(exampleAST(163, "\U00100001 a ( auto )"))
+	fmt.Println(exampleAST(165, "\U00100001 a ( auto )"))
 	// Output:
 	// &cc.ParameterList{
 	// · ParameterDeclaration: &cc.ParameterDeclaration{
@@ -3029,7 +3029,7 @@ func ExampleParameterList_case0() {
 }
 
 func ExampleParameterList_case1() {
-	fmt.Println(exampleAST(164, "\U00100001 a ( auto , auto )"))
+	fmt.Println(exampleAST(166, "\U00100001 a ( auto , auto )"))
 	// Output:
 	// &cc.ParameterList{
 	// · ParameterDeclaration: &cc.ParameterDeclaration{
@@ -3056,7 +3056,7 @@ func ExampleParameterList_case1() {
 }
 
 func ExampleParameterTypeList_base() {
-	fmt.Println(exampleAST(159, "\U00100001 a ( auto )"))
+	fmt.Println(exampleAST(161, "\U00100001 a ( auto )"))
 	// Output:
 	// &cc.ParameterTypeList{
 	// · ParameterList: &cc.ParameterList{
@@ -3073,7 +3073,7 @@ func ExampleParameterTypeList_base() {
 }
 
 func ExampleParameterTypeList_dots() {
-	fmt.Println(exampleAST(160, "\U00100001 a ( auto , ... )"))
+	fmt.Println(exampleAST(162, "\U00100001 a ( auto , ... )"))
 	// Output:
 	// &cc.ParameterTypeList{
 	// · Case: 1,
@@ -3093,13 +3093,13 @@ func ExampleParameterTypeList_dots() {
 }
 
 func ExampleParameterTypeListOpt_case0() {
-	fmt.Println(exampleAST(161, "\U00100000 ( _Bool ( )") == (*ParameterTypeListOpt)(nil))
+	fmt.Println(exampleAST(163, "\U00100000 ( _Bool ( )") == (*ParameterTypeListOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleParameterTypeListOpt_case1() {
-	fmt.Println(exampleAST(162, "\U00100000 ( _Bool ( auto )"))
+	fmt.Println(exampleAST(164, "\U00100000 ( _Bool ( auto )"))
 	// Output:
 	// &cc.ParameterTypeListOpt{
 	// · ParameterTypeList: &cc.ParameterTypeList{
@@ -3118,7 +3118,7 @@ func ExampleParameterTypeListOpt_case1() {
 }
 
 func ExamplePointer_base() {
-	fmt.Println(exampleAST(151, "\U00100001 * ("))
+	fmt.Println(exampleAST(153, "\U00100001 * ("))
 	// Output:
 	// &cc.Pointer{
 	// · Token: '*',
@@ -3126,7 +3126,7 @@ func ExamplePointer_base() {
 }
 
 func ExamplePointer_ptr() {
-	fmt.Println(exampleAST(152, "\U00100001 * * ("))
+	fmt.Println(exampleAST(154, "\U00100001 * * ("))
 	// Output:
 	// &cc.Pointer{
 	// · Case: 1,
@@ -3138,13 +3138,13 @@ func ExamplePointer_ptr() {
 }
 
 func ExamplePointerOpt_case0() {
-	fmt.Println(exampleAST(153, "\U00100001 (") == (*PointerOpt)(nil))
+	fmt.Println(exampleAST(155, "\U00100001 (") == (*PointerOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExamplePointerOpt_case1() {
-	fmt.Println(exampleAST(154, "\U00100001 * ("))
+	fmt.Println(exampleAST(156, "\U00100001 * ("))
 	// Output:
 	// &cc.PointerOpt{
 	// · Pointer: &cc.Pointer{
@@ -3154,7 +3154,7 @@ func ExamplePointerOpt_case1() {
 }
 
 func ExampleSelectionStmt_ifElse() {
-	fmt.Println(exampleAST(218, "\U00100001 a { if ( 'b' ) ; else ; !"))
+	fmt.Println(exampleAST(220, "\U00100001 a { if ( 'b' ) ; else ; !"))
 	// Output:
 	// &cc.SelectionStmt{
 	// · ExprList: &cc.ExprList{
@@ -3183,7 +3183,7 @@ func ExampleSelectionStmt_ifElse() {
 }
 
 func ExampleSelectionStmt_if() {
-	fmt.Println(exampleAST(219, "\U00100001 a { if ( 'b' ) ; !"))
+	fmt.Println(exampleAST(221, "\U00100001 a { if ( 'b' ) ; !"))
 	// Output:
 	// &cc.SelectionStmt{
 	// · Case: 1,
@@ -3206,7 +3206,7 @@ func ExampleSelectionStmt_if() {
 }
 
 func ExampleSelectionStmt_switch() {
-	fmt.Println(exampleAST(220, "\U00100001 a { switch ( 'b' ) ; !"))
+	fmt.Println(exampleAST(222, "\U00100001 a { switch ( 'b' ) ; !"))
 	// Output:
 	// &cc.SelectionStmt{
 	// · Case: 2,
@@ -3229,7 +3229,7 @@ func ExampleSelectionStmt_switch() {
 }
 
 func ExampleSpecifierQualifierList_qualifier() {
-	fmt.Println(exampleAST(118, "\U00100000 ( const ("))
+	fmt.Println(exampleAST(120, "\U00100000 ( const ("))
 	// Output:
 	// &cc.SpecifierQualifierList{
 	// · TypeQualifier: &cc.TypeQualifier{
@@ -3239,7 +3239,7 @@ func ExampleSpecifierQualifierList_qualifier() {
 }
 
 func ExampleSpecifierQualifierList_specifier() {
-	fmt.Println(exampleAST(119, "\U00100000 ( _Bool ("))
+	fmt.Println(exampleAST(121, "\U00100000 ( _Bool ("))
 	// Output:
 	// &cc.SpecifierQualifierList{
 	// · Case: 1,
@@ -3250,13 +3250,13 @@ func ExampleSpecifierQualifierList_specifier() {
 }
 
 func ExampleSpecifierQualifierListOpt_case0() {
-	fmt.Println(exampleAST(120, "\U00100000 ( const (") == (*SpecifierQualifierListOpt)(nil))
+	fmt.Println(exampleAST(122, "\U00100000 ( const (") == (*SpecifierQualifierListOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleSpecifierQualifierListOpt_case1() {
-	fmt.Println(exampleAST(121, "\U00100000 ( const _Bool ("))
+	fmt.Println(exampleAST(123, "\U00100000 ( const _Bool ("))
 	// Output:
 	// &cc.SpecifierQualifierListOpt{
 	// · SpecifierQualifierList: &cc.SpecifierQualifierList{
@@ -3269,7 +3269,7 @@ func ExampleSpecifierQualifierListOpt_case1() {
 }
 
 func ExampleStmt_block() {
-	fmt.Println(exampleAST(200, "\U00100001 a { { } !"))
+	fmt.Println(exampleAST(202, "\U00100001 a { { } !"))
 	// Output:
 	// &cc.Stmt{
 	// · CompoundStmt: &cc.CompoundStmt{
@@ -3280,7 +3280,7 @@ func ExampleStmt_block() {
 }
 
 func ExampleStmt_expr() {
-	fmt.Println(exampleAST(201, "\U00100001 a { ; !"))
+	fmt.Println(exampleAST(203, "\U00100001 a { ; !"))
 	// Output:
 	// &cc.Stmt{
 	// · Case: 1,
@@ -3291,7 +3291,7 @@ func ExampleStmt_expr() {
 }
 
 func ExampleStmt_iter() {
-	fmt.Println(exampleAST(202, "\U00100001 a { while ( 'b' ) ; !"))
+	fmt.Println(exampleAST(204, "\U00100001 a { while ( 'b' ) ; !"))
 	// Output:
 	// &cc.Stmt{
 	// · Case: 2,
@@ -3317,7 +3317,7 @@ func ExampleStmt_iter() {
 }
 
 func ExampleStmt_jump() {
-	fmt.Println(exampleAST(203, "\U00100001 a { break ; !"))
+	fmt.Println(exampleAST(205, "\U00100001 a { break ; !"))
 	// Output:
 	// &cc.Stmt{
 	// · Case: 3,
@@ -3329,7 +3329,7 @@ func ExampleStmt_jump() {
 }
 
 func ExampleStmt_labeled() {
-	fmt.Println(exampleAST(204, "\U00100001 a { default : ; !"))
+	fmt.Println(exampleAST(206, "\U00100001 a { default : ; !"))
 	// Output:
 	// &cc.Stmt{
 	// · Case: 4,
@@ -3348,7 +3348,7 @@ func ExampleStmt_labeled() {
 }
 
 func ExampleStmt_select() {
-	fmt.Println(exampleAST(205, "\U00100001 a { if ( 'b' ) ; !"))
+	fmt.Println(exampleAST(207, "\U00100001 a { if ( 'b' ) ; !"))
 	// Output:
 	// &cc.Stmt{
 	// · Case: 5,
@@ -3418,7 +3418,7 @@ func ExampleStorageClassSpecifier_typedef() {
 }
 
 func ExampleStructDeclaration_base() {
-	fmt.Println(exampleAST(116, "\U00100001 struct { _Bool a ; }"))
+	fmt.Println(exampleAST(118, "\U00100001 struct { _Bool a ; }"))
 	// Output:
 	// &cc.StructDeclaration{
 	// · SpecifierQualifierList: &cc.SpecifierQualifierList{
@@ -3446,7 +3446,7 @@ func ExampleStructDeclaration_base() {
 }
 
 func ExampleStructDeclaration_anon() {
-	fmt.Println(exampleAST(117, "\U00100001 struct { _Bool ; }"))
+	fmt.Println(exampleAST(119, "\U00100001 struct { _Bool ; }"))
 	// Output:
 	// &cc.StructDeclaration{
 	// · Case: 1,
@@ -3461,7 +3461,7 @@ func ExampleStructDeclaration_anon() {
 }
 
 func ExampleStructDeclarationList_case0() {
-	fmt.Println(exampleAST(114, "\U00100001 struct { _Bool ; }"))
+	fmt.Println(exampleAST(116, "\U00100001 struct { _Bool ; }"))
 	// Output:
 	// &cc.StructDeclarationList{
 	// · StructDeclaration: &cc.StructDeclaration{
@@ -3478,7 +3478,7 @@ func ExampleStructDeclarationList_case0() {
 }
 
 func ExampleStructDeclarationList_case1() {
-	fmt.Println(exampleAST(115, "\U00100001 struct { _Bool ; _Bool ; }"))
+	fmt.Println(exampleAST(117, "\U00100001 struct { _Bool ; _Bool ; }"))
 	// Output:
 	// &cc.StructDeclarationList{
 	// · StructDeclaration: &cc.StructDeclaration{
@@ -3508,7 +3508,7 @@ func ExampleStructDeclarationList_case1() {
 }
 
 func ExampleStructDeclarator_base() {
-	fmt.Println(exampleAST(124, "\U00100001 struct { _Bool a ,"))
+	fmt.Println(exampleAST(126, "\U00100001 struct { _Bool a ,"))
 	// Output:
 	// &cc.StructDeclarator{
 	// · Declarator: &cc.Declarator{
@@ -3525,7 +3525,7 @@ func ExampleStructDeclarator_base() {
 }
 
 func ExampleStructDeclarator_bits() {
-	fmt.Println(exampleAST(125, "\U00100001 struct { _Bool : 'a' ,"))
+	fmt.Println(exampleAST(127, "\U00100001 struct { _Bool : 'a' ,"))
 	// Output:
 	// &cc.StructDeclarator{
 	// · Case: 1,
@@ -3540,7 +3540,7 @@ func ExampleStructDeclarator_bits() {
 }
 
 func ExampleStructDeclaratorList_case0() {
-	fmt.Println(exampleAST(122, "\U00100001 struct { _Bool a ,"))
+	fmt.Println(exampleAST(124, "\U00100001 struct { _Bool a ,"))
 	// Output:
 	// &cc.StructDeclaratorList{
 	// · StructDeclarator: &cc.StructDeclarator{
@@ -3559,7 +3559,7 @@ func ExampleStructDeclaratorList_case0() {
 }
 
 func ExampleStructDeclaratorList_case1() {
-	fmt.Println(exampleAST(123, "\U00100001 struct { _Bool a , b ,"))
+	fmt.Println(exampleAST(125, "\U00100001 struct { _Bool a , b ,"))
 	// Output:
 	// &cc.StructDeclaratorList{
 	// · StructDeclarator: &cc.StructDeclarator{
@@ -3593,7 +3593,7 @@ func ExampleStructDeclaratorList_case1() {
 }
 
 func ExampleStructOrUnion_struct() {
-	fmt.Println(exampleAST(112, "\U00100001 struct {"))
+	fmt.Println(exampleAST(114, "\U00100001 struct {"))
 	// Output:
 	// &cc.StructOrUnion{
 	// · Token: STRUCT "struct",
@@ -3601,7 +3601,7 @@ func ExampleStructOrUnion_struct() {
 }
 
 func ExampleStructOrUnion_union() {
-	fmt.Println(exampleAST(113, "\U00100001 union {"))
+	fmt.Println(exampleAST(115, "\U00100001 union {"))
 	// Output:
 	// &cc.StructOrUnion{
 	// · Case: 1,
@@ -3621,7 +3621,7 @@ func ExampleStructOrUnionSpecifier_tag() {
 }
 
 func ExampleStructOrUnionSpecifier_empty() {
-	fmt.Println(exampleAST(109, "\U00100001 struct { } ("))
+	fmt.Println(exampleAST(110, "\U00100001 struct { } ("))
 	// Output:
 	// &cc.StructOrUnionSpecifier{
 	// · Case: 1,
@@ -3634,7 +3634,7 @@ func ExampleStructOrUnionSpecifier_empty() {
 }
 
 func ExampleStructOrUnionSpecifier_define() {
-	fmt.Println(exampleAST(111, "\U00100001 struct { _Bool ; } ("))
+	fmt.Println(exampleAST(113, "\U00100001 struct { _Bool ; } ("))
 	// Output:
 	// &cc.StructOrUnionSpecifier{
 	// · Case: 2,
@@ -3659,7 +3659,7 @@ func ExampleStructOrUnionSpecifier_define() {
 }
 
 func ExampleTypeName_case0() {
-	fmt.Println(exampleAST(173, "\U00100000 ( _Bool )"))
+	fmt.Println(exampleAST(175, "\U00100000 ( _Bool )"))
 	// Output:
 	// &cc.TypeName{
 	// · SpecifierQualifierList: &cc.SpecifierQualifierList{
@@ -3672,7 +3672,7 @@ func ExampleTypeName_case0() {
 }
 
 func ExampleTypeQualifier_const() {
-	fmt.Println(exampleAST(134, "\U00100001 const !"))
+	fmt.Println(exampleAST(136, "\U00100001 const !"))
 	// Output:
 	// &cc.TypeQualifier{
 	// · Token: CONST "const",
@@ -3680,7 +3680,7 @@ func ExampleTypeQualifier_const() {
 }
 
 func ExampleTypeQualifier_restrict() {
-	fmt.Println(exampleAST(135, "\U00100001 restrict !"))
+	fmt.Println(exampleAST(137, "\U00100001 restrict !"))
 	// Output:
 	// &cc.TypeQualifier{
 	// · Case: 1,
@@ -3689,7 +3689,7 @@ func ExampleTypeQualifier_restrict() {
 }
 
 func ExampleTypeQualifier_volatile() {
-	fmt.Println(exampleAST(136, "\U00100001 volatile !"))
+	fmt.Println(exampleAST(138, "\U00100001 volatile !"))
 	// Output:
 	// &cc.TypeQualifier{
 	// · Case: 2,
@@ -3698,7 +3698,7 @@ func ExampleTypeQualifier_volatile() {
 }
 
 func ExampleTypeQualifierList_case0() {
-	fmt.Println(exampleAST(155, "\U00100001 * const !"))
+	fmt.Println(exampleAST(157, "\U00100001 * const !"))
 	// Output:
 	// &cc.TypeQualifierList{
 	// · TypeQualifier: &cc.TypeQualifier{
@@ -3708,7 +3708,7 @@ func ExampleTypeQualifierList_case0() {
 }
 
 func ExampleTypeQualifierList_case1() {
-	fmt.Println(exampleAST(156, "\U00100001 * const const !"))
+	fmt.Println(exampleAST(158, "\U00100001 * const const !"))
 	// Output:
 	// &cc.TypeQualifierList{
 	// · TypeQualifier: &cc.TypeQualifier{
@@ -3724,13 +3724,13 @@ func ExampleTypeQualifierList_case1() {
 }
 
 func ExampleTypeQualifierListOpt_case0() {
-	fmt.Println(exampleAST(157, "\U00100001 * (") == (*TypeQualifierListOpt)(nil))
+	fmt.Println(exampleAST(159, "\U00100001 * (") == (*TypeQualifierListOpt)(nil))
 	// Output:
 	// true
 }
 
 func ExampleTypeQualifierListOpt_case1() {
-	fmt.Println(exampleAST(158, "\U00100001 * const !"))
+	fmt.Println(exampleAST(160, "\U00100001 * const !"))
 	// Output:
 	// &cc.TypeQualifierListOpt{
 	// · TypeQualifierList: &cc.TypeQualifierList{
