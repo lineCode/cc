@@ -2169,6 +2169,7 @@ func (n *Initializer) check(ctx *context, t Type, fn *Declarator, field bool, ar
 			switch k := UnderlyingType(t).Kind(); k {
 			case
 				Array,
+				Struct,
 				Union:
 
 				return op
