@@ -39,6 +39,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"sort"
 	"strings"
 	"sync"
@@ -68,6 +69,8 @@ void _start(int argc, char **argv)
 var (
 	_ Source = (*FileSource)(nil)
 	_ Source = (*StringSource)(nil)
+
+	_ debug.GCStats
 
 	// YYDebug points to parser's yyDebug variable.
 	YYDebug        = &yyDebug
@@ -388,7 +391,9 @@ func (c *context) position(n Node) (r token.Position) {
 
 func (c *context) errPos(pos token.Pos, msg string, args ...interface{}) {
 	c.Lock()
-	c.errors.Add(fset.PositionFor(pos, true), fmt.Sprintf(msg, args...))
+	s := fmt.Sprintf(msg, args...)
+	//s = fmt.Sprintf("%s\n====%s\n----", s, debug.Stack())
+	c.errors.Add(fset.PositionFor(pos, true), s)
 	c.Unlock()
 }
 

@@ -1211,6 +1211,10 @@ func (c *cpp) include(n Node, nm string, paths []string, w tokenWriter) {
 		return
 	}
 
+	if n, _ := s.Size(); n == 0 {
+		return
+	}
+
 	if f := c.tweaks.TrackIncludes; f != nil {
 		f(path)
 	}

@@ -1714,7 +1714,7 @@ func (n *ExternalDeclarationList) check(ctx *context) (err error) {
 func (n *ExternalDeclaration) check(ctx *context) {
 	switch n.Case {
 	case ExternalDeclarationDecl: // Declaration
-		n.Declaration.check(ctx, nil, nil, nil)
+		n.Declaration.check(ctx, nil, nil, nil, false)
 	case ExternalDeclarationFunc: // FunctionDefinition
 		n.FunctionDefinition.check(ctx)
 	default:
@@ -1752,6 +1752,7 @@ func (n *FunctionDefinition) check(ctx *context) {
 		n.FunctionBody.check(ctx, n.Declarator)
 		for _, v := range d.ParameterNames() {
 			p, _ := sc.Idents[v].(*Declarator)
+			p.IsFunctionParameter = true
 			d.Parameters = append(d.Parameters, p)
 		}
 	default:
@@ -1776,7 +1777,7 @@ func (n *DeclarationListOpt) check(ctx *context, scope *Scope) (r []*Declarator)
 	}
 
 	for l := n.DeclarationList; l != nil; l = l.DeclarationList {
-		r = append(r, l.Declaration.check(ctx, nil, nil, scope)...)
+		r = append(r, l.Declaration.check(ctx, nil, nil, scope, true)...)
 	}
 	return r
 }
@@ -1914,7 +1915,7 @@ func (n *BlockItemList) check(ctx *context, fn *Declarator, seq *int, sc []int, 
 func (n *BlockItem) check(ctx *context, fn *Declarator, seq *int, sc []int, inSwitch *SelectionStmt, inLoop bool) {
 	switch n.Case {
 	case BlockItemDecl: // Declaration
-		n.Declaration.check(ctx, sc, fn, nil)
+		n.Declaration.check(ctx, sc, fn, nil, false)
 	case BlockItemStmt: // Stmt
 		n.Stmt.check(ctx, fn, seq, sc, inSwitch, inLoop)
 	default:
@@ -2001,7 +2002,7 @@ func (n *IterationStmt) check(ctx *context, fn *Declarator, seq *int, sc []int, 
 		}
 		n.Stmt.check(ctx, fn, seq, sc, inSwitch, true)
 	case IterationStmtForDecl: // "for" '(' Declaration ExprListOpt ';' ExprListOpt ')' Stmt
-		n.Declaration.check(ctx, sc, fn, n.Declaration.Scope)
+		n.Declaration.check(ctx, sc, fn, n.Declaration.Scope, false)
 		n.ExprListOpt.eval(ctx, true, fn)
 		if e := n.ExprListOpt.eval(ctx, true, fn); e.Type != nil && !e.isScalarType() {
 			panic(ctx.position(n))
@@ -2076,7 +2077,7 @@ func (n *ExprStmt) check(ctx *context, fn *Declarator) {
 	n.ExprListOpt.eval(ctx, true, fn)
 }
 
-func (n *Declaration) check(ctx *context, sc []int, fn *Declarator, scope *Scope) []*Declarator {
+func (n *Declaration) check(ctx *context, sc []int, fn *Declarator, scope *Scope, fnParam bool) []*Declarator {
 	// DeclarationSpecifiers InitDeclaratorListOpt ';'
 	ds := &DeclarationSpecifier{}
 	n.DeclarationSpecifiers.check(ctx, ds)
@@ -2085,12 +2086,19 @@ func (n *Declaration) check(ctx *context, sc []int, fn *Declarator, scope *Scope
 	}
 	r := n.InitDeclaratorListOpt.check(ctx, ds, sc, fn, scope)
 	for _, v := range r {
-		if v.Linkage == LinkageNone {
-			switch x := UnderlyingType(v.Type).(type) {
-			case *ArrayType:
-				if x.Size.Type == nil {
-					panic(fmt.Errorf("%v: %s has incomplete type: %v", ctx.position(v), dict.S(v.Name()), v.Type))
-				}
+		if fnParam {
+			v.IsFunctionParameter = true
+			continue
+		}
+
+		if v.Linkage == LinkageExternal && v.DeclarationSpecifier.IsExtern() {
+			continue
+		}
+
+		switch x := UnderlyingType(v.Type).(type) {
+		case *ArrayType:
+			if x.Size.Type == nil {
+				panic(fmt.Errorf("%v: %s has incomplete type: %v", ctx.position(v), dict.S(v.Name()), v.Type))
 			}
 		}
 	}
