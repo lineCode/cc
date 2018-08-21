@@ -2720,7 +2720,7 @@ func (n *Declarator) insert(ctx *context, isFunction bool) {
 					n.Scope.Idents[nm] = n
 				}
 			default:
-				panic(fmt.Errorf("%v: %v %v", ctx.position(n), n.Linkage, isFunction))
+				panic(fmt.Errorf("%v: %v %v %v:", ctx.position(n), n.Linkage, isFunction, ctx.position(ex)))
 			}
 		case LinkageInternal:
 			switch n.Linkage {
