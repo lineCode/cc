@@ -778,12 +778,6 @@ outer:
 
 				n.Operand = Operand{Type: fp.Declarator.Type}
 				n.Operand.FieldProperties = fp
-				if d := n.Expr.Declarator; d != nil {
-					//TODO- n.Declarator = d breaks most SQLite TCL tests
-					if n.Operand.Type.Kind() == Array || fp.Bits != 0 {
-						d.AddressTaken = true
-					}
-				}
 				break out3
 			case *TaggedStructType:
 				y := x.getType()
@@ -808,12 +802,6 @@ outer:
 
 				n.Operand = Operand{Type: fp.Declarator.Type}
 				n.Operand.FieldProperties = fp
-				if d := n.Expr.Declarator; d != nil {
-					//TODO- n.Declarator = d breaks most SQLite TCL tests
-					if n.Operand.Type.Kind() == Array || fp.Bits != 0 {
-						d.AddressTaken = true
-					}
-				}
 				break out3
 			default:
 				//dbg("%v: %T", ctx.position(n), x)
@@ -822,6 +810,7 @@ outer:
 		}
 		if d := n.Expr.Declarator; d != nil {
 			d.Referenced++
+			d.AddressTaken = true
 		}
 	case ExprDivAssign: // Expr "/=" Expr
 		// [0]6.5.16.2
