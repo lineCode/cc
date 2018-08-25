@@ -2299,6 +2299,7 @@ const (
 	LabeledStmtSwitchCase LabeledStmtCase = iota
 	LabeledStmtDefault
 	LabeledStmtLabel
+	LabeledStmtLabel2
 )
 
 // String implements fmt.Stringer
@@ -2310,6 +2311,8 @@ func (n LabeledStmtCase) String() string {
 		return "LabeledStmtDefault"
 	case LabeledStmtLabel:
 		return "LabeledStmtLabel"
+	case LabeledStmtLabel2:
+		return "LabeledStmtLabel2"
 	default:
 		return fmt.Sprintf("LabeledStmtCase(%v)", int(n))
 	}
@@ -2321,6 +2324,7 @@ func (n LabeledStmtCase) String() string {
 //	        "case" ConstExpr ':' Stmt  // Case LabeledStmtSwitchCase
 //	|       "default" ':' Stmt         // Case LabeledStmtDefault
 //	|       IDENTIFIER ':' Stmt        // Case LabeledStmtLabel
+//	|       TYPEDEF_NAME ':' Stmt      // Case LabeledStmtLabel2
 type LabeledStmt struct {
 	Case      LabeledStmtCase
 	ConstExpr *ConstExpr

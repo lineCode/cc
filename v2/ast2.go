@@ -1953,6 +1953,8 @@ func (n *LabeledStmt) check(ctx *context, fn *Declarator, seq *int, sc []int, in
 		n.Stmt.check(ctx, fn, seq, sc, inSwitch, inLoop)
 	case LabeledStmtLabel: // IDENTIFIER ':' Stmt
 		n.Stmt.check(ctx, fn, seq, sc, inSwitch, inLoop)
+	case LabeledStmtLabel2: // TYPEDEF_NAME ':' Stmt
+		n.Stmt.check(ctx, fn, seq, sc, inSwitch, inLoop)
 	default:
 		panic(fmt.Errorf("%v: TODO %v", ctx.position(n), n.Case))
 	}

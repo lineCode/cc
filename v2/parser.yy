@@ -455,7 +455,7 @@ import (
 				}
 /*yy:case Define     */ |	StructOrUnion IdentifierOpt '{'
 				{
-					lx.newScope()
+					lx.newStructScope()
 				}
 				StructDeclarationList
 				{
@@ -745,6 +745,10 @@ import (
                         	"case" ConstExpr ':' Stmt
 /*yy:case Default    */ |	"default" ':' Stmt
 /*yy:case Label      */ |	IDENTIFIER ':' Stmt
+				{
+					lx.scope.insertLabel(lx.context, lhs)
+				}
+/*yy:case Label2      */ |	TYPEDEF_NAME ':' Stmt
 				{
 					lx.scope.insertLabel(lx.context, lhs)
 				}

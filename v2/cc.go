@@ -380,6 +380,7 @@ func newContext(t *Tweaks) (*context, error) {
 
 func (c *context) err(n Node, msg string, args ...interface{}) { c.errPos(n.Pos(), msg, args...) }
 func (c *context) newScope()                                   { c.scope = newScope(c.scope) }
+func (c *context) newStructScope()                             { c.scope = newScope(c.scope); c.scope.structScope = true }
 
 func (c *context) position(n Node) (r token.Position) {
 	if n != nil {
@@ -835,8 +836,9 @@ type Scope struct {
 	StructTags map[int]*StructOrUnionSpecifier // name ID: *StructOrUnionSpecifier
 
 	// parser support
-	typedefs map[int]struct{} // name: nothing
-	typedef  bool
+	typedefs    map[int]struct{} // name: nothing
+	typedef     bool
+	structScope bool
 }
 
 func newScope(parent *Scope) *Scope { return &Scope{Parent: parent} }
@@ -903,7 +905,7 @@ func (s *Scope) insertEnumerationConstant(ctx *context, c *EnumerationConstant) 
 }
 
 func (s *Scope) insertStructTag(ctx *context, ss *StructOrUnionSpecifier) {
-	for s.Parent != nil {
+	for s.structScope {
 		s = s.Parent
 	}
 	if s.StructTags == nil {
