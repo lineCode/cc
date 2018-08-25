@@ -2,7 +2,7 @@
 
 package cc
 
-import "fmt"
+import "strconv"
 
 const _Namespace_name = "NSIdentifiersNSTags"
 
@@ -10,7 +10,7 @@ var _Namespace_index = [...]uint8{0, 13, 19}
 
 func (i Namespace) String() string {
 	if i < 0 || i >= Namespace(len(_Namespace_index)-1) {
-		return fmt.Sprintf("Namespace(%d)", i)
+		return "Namespace(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
 	return _Namespace_name[_Namespace_index[i]:_Namespace_index[i+1]]
 }

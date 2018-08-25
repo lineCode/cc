@@ -2,7 +2,7 @@
 
 package cc
 
-import "fmt"
+import "strconv"
 
 const _Linkage_name = "NoneInternalExternal"
 
@@ -10,7 +10,7 @@ var _Linkage_index = [...]uint8{0, 4, 12, 20}
 
 func (i Linkage) String() string {
 	if i < 0 || i >= Linkage(len(_Linkage_index)-1) {
-		return fmt.Sprintf("Linkage(%d)", i)
+		return "Linkage(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
 	return _Linkage_name[_Linkage_index[i]:_Linkage_index[i+1]]
 }

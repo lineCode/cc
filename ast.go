@@ -15,7 +15,7 @@ import (
 // AbstractDeclarator represents data reduced by productions:
 //
 //	AbstractDeclarator:
-//	        Pointer
+//	        Pointer                              // Case 0
 //	|       PointerOpt DirectAbstractDeclarator  // Case 1
 type AbstractDeclarator struct {
 	declarator               *Declarator
@@ -55,7 +55,7 @@ func (n *AbstractDeclarator) Pos() token.Pos {
 // AbstractDeclaratorOpt represents data reduced by productions:
 //
 //	AbstractDeclaratorOpt:
-//	        /* empty */
+//	        /* empty */         // Case 0
 //	|       AbstractDeclarator  // Case 1
 type AbstractDeclaratorOpt struct {
 	AbstractDeclarator *AbstractDeclarator
@@ -80,7 +80,7 @@ func (n *AbstractDeclaratorOpt) Pos() token.Pos {
 // ArgumentExpressionList represents data reduced by productions:
 //
 //	ArgumentExpressionList:
-//	        Expression
+//	        Expression                             // Case 0
 //	|       ArgumentExpressionList ',' Expression  // Case 1
 type ArgumentExpressionList struct {
 	ArgumentExpressionList *ArgumentExpressionList
@@ -132,7 +132,7 @@ func (n *ArgumentExpressionList) Pos() token.Pos {
 // ArgumentExpressionListOpt represents data reduced by productions:
 //
 //	ArgumentExpressionListOpt:
-//	        /* empty */
+//	        /* empty */             // Case 0
 //	|       ArgumentExpressionList  // Case 1
 type ArgumentExpressionListOpt struct {
 	ArgumentExpressionList *ArgumentExpressionList
@@ -157,7 +157,7 @@ func (n *ArgumentExpressionListOpt) Pos() token.Pos {
 // AssemblerInstructions represents data reduced by productions:
 //
 //	AssemblerInstructions:
-//	        STRINGLITERAL
+//	        STRINGLITERAL                        // Case 0
 //	|       AssemblerInstructions STRINGLITERAL  // Case 1
 type AssemblerInstructions struct {
 	AssemblerInstructions *AssemblerInstructions
@@ -208,7 +208,7 @@ func (n *AssemblerInstructions) Pos() token.Pos {
 // AssemblerOperand represents data reduced by production:
 //
 //	AssemblerOperand:
-//	        AssemblerSymbolicNameOpt STRINGLITERAL '(' Expression ')'
+//	        AssemblerSymbolicNameOpt STRINGLITERAL '(' Expression ')'  // Case 0
 type AssemblerOperand struct {
 	AssemblerSymbolicNameOpt *AssemblerSymbolicNameOpt
 	Expression               *Expression
@@ -240,7 +240,7 @@ func (n *AssemblerOperand) Pos() token.Pos {
 // AssemblerOperands represents data reduced by productions:
 //
 //	AssemblerOperands:
-//	        AssemblerOperand
+//	        AssemblerOperand                        // Case 0
 //	|       AssemblerOperands ',' AssemblerOperand  // Case 1
 type AssemblerOperands struct {
 	AssemblerOperand  *AssemblerOperand
@@ -292,7 +292,7 @@ func (n *AssemblerOperands) Pos() token.Pos {
 // AssemblerStatement represents data reduced by productions:
 //
 //	AssemblerStatement:
-//	        BasicAssemblerStatement
+//	        BasicAssemblerStatement                                                                                           // Case 0
 //	|       "asm" VolatileOpt '(' AssemblerInstructions ':' AssemblerOperands ')'                                             // Case 1
 //	|       "asm" VolatileOpt '(' AssemblerInstructions ':' AssemblerOperands ':' AssemblerOperands ')'                       // Case 2
 //	|       "asm" VolatileOpt '(' AssemblerInstructions ':' AssemblerOperands ':' AssemblerOperands ':' Clobbers ')'          // Case 3
@@ -344,7 +344,7 @@ func (n *AssemblerStatement) Pos() token.Pos {
 // AssemblerSymbolicNameOpt represents data reduced by productions:
 //
 //	AssemblerSymbolicNameOpt:
-//	        /* empty */
+//	        /* empty */         // Case 0
 //	|       '[' IDENTIFIER ']'  // Case 1
 type AssemblerSymbolicNameOpt struct {
 	Token  xc.Token
@@ -371,7 +371,7 @@ func (n *AssemblerSymbolicNameOpt) Pos() token.Pos {
 // BasicAssemblerStatement represents data reduced by production:
 //
 //	BasicAssemblerStatement:
-//	        "asm" VolatileOpt '(' AssemblerInstructions ')'
+//	        "asm" VolatileOpt '(' AssemblerInstructions ')'  // Case 0
 type BasicAssemblerStatement struct {
 	AssemblerInstructions *AssemblerInstructions
 	Token                 xc.Token
@@ -399,7 +399,7 @@ func (n *BasicAssemblerStatement) Pos() token.Pos {
 // BlockItem represents data reduced by productions:
 //
 //	BlockItem:
-//	        Declaration
+//	        Declaration  // Case 0
 //	|       Statement    // Case 1
 type BlockItem struct {
 	Case        int
@@ -433,7 +433,7 @@ func (n *BlockItem) Pos() token.Pos {
 // BlockItemList represents data reduced by productions:
 //
 //	BlockItemList:
-//	        BlockItem
+//	        BlockItem                // Case 0
 //	|       BlockItemList BlockItem  // Case 1
 type BlockItemList struct {
 	BlockItem     *BlockItem
@@ -484,7 +484,7 @@ func (n *BlockItemList) Pos() token.Pos {
 // BlockItemListOpt represents data reduced by productions:
 //
 //	BlockItemListOpt:
-//	        /* empty */
+//	        /* empty */    // Case 0
 //	|       BlockItemList  // Case 1
 type BlockItemListOpt struct {
 	BlockItemList *BlockItemList
@@ -509,7 +509,7 @@ func (n *BlockItemListOpt) Pos() token.Pos {
 // Clobbers represents data reduced by productions:
 //
 //	Clobbers:
-//	        STRINGLITERAL
+//	        STRINGLITERAL               // Case 0
 //	|       Clobbers ',' STRINGLITERAL  // Case 1
 type Clobbers struct {
 	Case     int
@@ -561,7 +561,7 @@ func (n *Clobbers) Pos() token.Pos {
 // CommaOpt represents data reduced by productions:
 //
 //	CommaOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       ','          // Case 1
 type CommaOpt struct {
 	Token xc.Token
@@ -586,7 +586,7 @@ func (n *CommaOpt) Pos() token.Pos {
 // CompoundStatement represents data reduced by production:
 //
 //	CompoundStatement:
-//	        '{' BlockItemListOpt '}'
+//	        '{' BlockItemListOpt '}'  // Case 0
 type CompoundStatement struct {
 	scope            *Bindings // Scope of the CompoundStatement.
 	BlockItemListOpt *BlockItemListOpt
@@ -613,7 +613,7 @@ func (n *CompoundStatement) Pos() token.Pos {
 // ConstantExpression represents data reduced by production:
 //
 //	ConstantExpression:
-//	        Expression
+//	        Expression  // Case 0
 type ConstantExpression struct {
 	Type       Type        // Type of expression.
 	Value      interface{} // Non nil for certain constant expressions.
@@ -640,7 +640,7 @@ func (n *ConstantExpression) Pos() token.Pos {
 // ControlLine represents data reduced by productions:
 //
 //	ControlLine:
-//	        PPDEFINE IDENTIFIER ReplacementList
+//	        PPDEFINE IDENTIFIER ReplacementList                                      // Case 0
 //	|       PPDEFINE IDENTIFIER_LPAREN "..." ')' ReplacementList                     // Case 1
 //	|       PPDEFINE IDENTIFIER_LPAREN IdentifierList ',' "..." ')' ReplacementList  // Case 2
 //	|       PPDEFINE IDENTIFIER_LPAREN IdentifierListOpt ')' ReplacementList         // Case 3
@@ -687,7 +687,7 @@ func (n *ControlLine) Pos() token.Pos {
 // Declaration represents data reduced by productions:
 //
 //	Declaration:
-//	        DeclarationSpecifiers InitDeclaratorListOpt ';'
+//	        DeclarationSpecifiers InitDeclaratorListOpt ';'  // Case 0
 //	|       StaticAssertDeclaration                          // Case 1
 type Declaration struct {
 	declarator              *Declarator // Synthetic declarator when InitDeclaratorListOpt is nil.
@@ -724,7 +724,7 @@ func (n *Declaration) Pos() token.Pos {
 // DeclarationList represents data reduced by productions:
 //
 //	DeclarationList:
-//	        Declaration
+//	        Declaration                  // Case 0
 //	|       DeclarationList Declaration  // Case 1
 type DeclarationList struct {
 	Case            int
@@ -775,7 +775,7 @@ func (n *DeclarationList) Pos() token.Pos {
 // DeclarationListOpt represents data reduced by productions:
 //
 //	DeclarationListOpt:
-//	        /* empty */
+//	        /* empty */      // Case 0
 //	|       DeclarationList  // Case 1
 type DeclarationListOpt struct {
 	paramsScope     *Bindings
@@ -801,7 +801,7 @@ func (n *DeclarationListOpt) Pos() token.Pos {
 // DeclarationSpecifiers represents data reduced by productions:
 //
 //	DeclarationSpecifiers:
-//	        StorageClassSpecifier DeclarationSpecifiersOpt
+//	        StorageClassSpecifier DeclarationSpecifiersOpt  // Case 0
 //	|       TypeSpecifier DeclarationSpecifiersOpt          // Case 1
 //	|       TypeQualifier DeclarationSpecifiersOpt          // Case 2
 //	|       FunctionSpecifier DeclarationSpecifiersOpt      // Case 3
@@ -846,7 +846,7 @@ func (n *DeclarationSpecifiers) Pos() token.Pos {
 // DeclarationSpecifiersOpt represents data reduced by productions:
 //
 //	DeclarationSpecifiersOpt:
-//	        /* empty */
+//	        /* empty */            // Case 0
 //	|       DeclarationSpecifiers  // Case 1
 type DeclarationSpecifiersOpt struct {
 	attr                  int // tsInline, tsTypedefName, ...
@@ -873,7 +873,7 @@ func (n *DeclarationSpecifiersOpt) Pos() token.Pos {
 // Declarator represents data reduced by production:
 //
 //	Declarator:
-//	        PointerOpt DirectDeclarator
+//	        PointerOpt DirectDeclarator  // Case 0
 type Declarator struct {
 	Linkage          Linkage
 	Type             Type
@@ -911,7 +911,7 @@ func (n *Declarator) Pos() token.Pos {
 // DeclaratorOpt represents data reduced by productions:
 //
 //	DeclaratorOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       Declarator   // Case 1
 type DeclaratorOpt struct {
 	Declarator *Declarator
@@ -936,7 +936,7 @@ func (n *DeclaratorOpt) Pos() token.Pos {
 // Designation represents data reduced by production:
 //
 //	Designation:
-//	        DesignatorList '='
+//	        DesignatorList '='  // Case 0
 type Designation struct {
 	DesignatorList *DesignatorList
 	Token          xc.Token
@@ -961,7 +961,7 @@ func (n *Designation) Pos() token.Pos {
 // DesignationOpt represents data reduced by productions:
 //
 //	DesignationOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       Designation  // Case 1
 type DesignationOpt struct {
 	Designation *Designation
@@ -986,7 +986,7 @@ func (n *DesignationOpt) Pos() token.Pos {
 // Designator represents data reduced by productions:
 //
 //	Designator:
-//	        '[' ConstantExpression ']'
+//	        '[' ConstantExpression ']'  // Case 0
 //	|       '.' IDENTIFIER              // Case 1
 type Designator struct {
 	Case               int
@@ -1014,7 +1014,7 @@ func (n *Designator) Pos() token.Pos {
 // DesignatorList represents data reduced by productions:
 //
 //	DesignatorList:
-//	        Designator
+//	        Designator                 // Case 0
 //	|       DesignatorList Designator  // Case 1
 type DesignatorList struct {
 	Case           int
@@ -1065,7 +1065,7 @@ func (n *DesignatorList) Pos() token.Pos {
 // DirectAbstractDeclarator represents data reduced by productions:
 //
 //	DirectAbstractDeclarator:
-//	        '(' AbstractDeclarator ')'
+//	        '(' AbstractDeclarator ')'                                                    // Case 0
 //	|       DirectAbstractDeclaratorOpt '[' ExpressionOpt ']'                             // Case 1
 //	|       DirectAbstractDeclaratorOpt '[' TypeQualifierList ExpressionOpt ']'           // Case 2
 //	|       DirectAbstractDeclaratorOpt '[' "static" TypeQualifierListOpt Expression ']'  // Case 3
@@ -1122,7 +1122,7 @@ func (n *DirectAbstractDeclarator) Pos() token.Pos {
 // DirectAbstractDeclaratorOpt represents data reduced by productions:
 //
 //	DirectAbstractDeclaratorOpt:
-//	        /* empty */
+//	        /* empty */               // Case 0
 //	|       DirectAbstractDeclarator  // Case 1
 type DirectAbstractDeclaratorOpt struct {
 	DirectAbstractDeclarator *DirectAbstractDeclarator
@@ -1147,7 +1147,7 @@ func (n *DirectAbstractDeclaratorOpt) Pos() token.Pos {
 // DirectDeclarator represents data reduced by productions:
 //
 //	DirectDeclarator:
-//	        IDENTIFIER
+//	        IDENTIFIER                                                         // Case 0
 //	|       '(' Declarator ')'                                                 // Case 1
 //	|       DirectDeclarator '[' TypeQualifierListOpt ExpressionOpt ']'        // Case 2
 //	|       DirectDeclarator '[' "static" TypeQualifierListOpt Expression ']'  // Case 3
@@ -1205,7 +1205,7 @@ func (n *DirectDeclarator) Pos() token.Pos {
 // ElifGroup represents data reduced by production:
 //
 //	ElifGroup:
-//	        PPELIF PPTokenList '\n' GroupListOpt
+//	        PPELIF PPTokenList '\n' GroupListOpt  // Case 0
 type ElifGroup struct {
 	GroupListOpt *GroupListOpt
 	PPTokenList  PPTokenList
@@ -1232,7 +1232,7 @@ func (n *ElifGroup) Pos() token.Pos {
 // ElifGroupList represents data reduced by productions:
 //
 //	ElifGroupList:
-//	        ElifGroup
+//	        ElifGroup                // Case 0
 //	|       ElifGroupList ElifGroup  // Case 1
 type ElifGroupList struct {
 	Case          int
@@ -1283,7 +1283,7 @@ func (n *ElifGroupList) Pos() token.Pos {
 // ElifGroupListOpt represents data reduced by productions:
 //
 //	ElifGroupListOpt:
-//	        /* empty */
+//	        /* empty */    // Case 0
 //	|       ElifGroupList  // Case 1
 type ElifGroupListOpt struct {
 	ElifGroupList *ElifGroupList
@@ -1308,7 +1308,7 @@ func (n *ElifGroupListOpt) Pos() token.Pos {
 // ElseGroup represents data reduced by production:
 //
 //	ElseGroup:
-//	        PPELSE '\n' GroupListOpt
+//	        PPELSE '\n' GroupListOpt  // Case 0
 type ElseGroup struct {
 	GroupListOpt *GroupListOpt
 	Token        xc.Token
@@ -1334,7 +1334,7 @@ func (n *ElseGroup) Pos() token.Pos {
 // ElseGroupOpt represents data reduced by productions:
 //
 //	ElseGroupOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       ElseGroup    // Case 1
 type ElseGroupOpt struct {
 	ElseGroup *ElseGroup
@@ -1359,7 +1359,7 @@ func (n *ElseGroupOpt) Pos() token.Pos {
 // EndifLine represents data reduced by production:
 //
 //	EndifLine:
-//	        PPENDIF
+//	        PPENDIF  // Case 0
 type EndifLine struct {
 	Token xc.Token
 }
@@ -1383,7 +1383,7 @@ func (n *EndifLine) Pos() token.Pos {
 // EnumSpecifier represents data reduced by productions:
 //
 //	EnumSpecifier:
-//	        "enum" IdentifierOpt '{' EnumeratorList CommaOpt '}'
+//	        "enum" IdentifierOpt '{' EnumeratorList CommaOpt '}'  // Case 0
 //	|       "enum" IDENTIFIER                                     // Case 1
 type EnumSpecifier struct {
 	unsigned       bool
@@ -1415,7 +1415,7 @@ func (n *EnumSpecifier) Pos() token.Pos {
 // EnumerationConstant represents data reduced by production:
 //
 //	EnumerationConstant:
-//	        IDENTIFIER
+//	        IDENTIFIER  // Case 0
 type EnumerationConstant struct {
 	Token xc.Token
 }
@@ -1439,7 +1439,7 @@ func (n *EnumerationConstant) Pos() token.Pos {
 // Enumerator represents data reduced by productions:
 //
 //	Enumerator:
-//	        EnumerationConstant
+//	        EnumerationConstant                         // Case 0
 //	|       EnumerationConstant '=' ConstantExpression  // Case 1
 type Enumerator struct {
 	Value               interface{} // Enumerator's value.
@@ -1468,7 +1468,7 @@ func (n *Enumerator) Pos() token.Pos {
 // EnumeratorList represents data reduced by productions:
 //
 //	EnumeratorList:
-//	        Enumerator
+//	        Enumerator                     // Case 0
 //	|       EnumeratorList ',' Enumerator  // Case 1
 type EnumeratorList struct {
 	Case           int
@@ -1520,7 +1520,7 @@ func (n *EnumeratorList) Pos() token.Pos {
 // Expression represents data reduced by productions:
 //
 //	Expression:
-//	        IDENTIFIER
+//	        IDENTIFIER                                         // Case 0
 //	|       CHARCONST                                          // Case 1
 //	|       FLOATCONST                                         // Case 2
 //	|       INTCONST                                           // Case 3
@@ -1626,7 +1626,7 @@ func (n *Expression) Pos() token.Pos {
 // ExpressionList represents data reduced by productions:
 //
 //	ExpressionList:
-//	        Expression
+//	        Expression                     // Case 0
 //	|       ExpressionList ',' Expression  // Case 1
 type ExpressionList struct {
 	Type           Type        // Type of expression.
@@ -1680,7 +1680,7 @@ func (n *ExpressionList) Pos() token.Pos {
 // ExpressionListOpt represents data reduced by productions:
 //
 //	ExpressionListOpt:
-//	        /* empty */
+//	        /* empty */     // Case 0
 //	|       ExpressionList  // Case 1
 type ExpressionListOpt struct {
 	ExpressionList *ExpressionList
@@ -1705,7 +1705,7 @@ func (n *ExpressionListOpt) Pos() token.Pos {
 // ExpressionOpt represents data reduced by productions:
 //
 //	ExpressionOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       Expression   // Case 1
 type ExpressionOpt struct {
 	Expression *Expression
@@ -1730,7 +1730,7 @@ func (n *ExpressionOpt) Pos() token.Pos {
 // ExpressionStatement represents data reduced by production:
 //
 //	ExpressionStatement:
-//	        ExpressionListOpt ';'
+//	        ExpressionListOpt ';'  // Case 0
 type ExpressionStatement struct {
 	ExpressionListOpt *ExpressionListOpt
 	Token             xc.Token
@@ -1759,7 +1759,7 @@ func (n *ExpressionStatement) Pos() token.Pos {
 // ExternalDeclaration represents data reduced by productions:
 //
 //	ExternalDeclaration:
-//	        FunctionDefinition
+//	        FunctionDefinition           // Case 0
 //	|       Declaration                  // Case 1
 //	|       BasicAssemblerStatement ';'  // Case 2
 //	|       ';'                          // Case 3
@@ -1801,7 +1801,7 @@ func (n *ExternalDeclaration) Pos() token.Pos {
 // FunctionBody represents data reduced by productions:
 //
 //	FunctionBody:
-//	        CompoundStatement
+//	        CompoundStatement       // Case 0
 //	|       AssemblerStatement ';'  // Case 1
 type FunctionBody struct {
 	scope              *Bindings // Scope of the FunctionBody.
@@ -1837,7 +1837,7 @@ func (n *FunctionBody) Pos() token.Pos {
 // FunctionDefinition represents data reduced by productions:
 //
 //	FunctionDefinition:
-//	        DeclarationSpecifiers Declarator DeclarationListOpt FunctionBody
+//	        DeclarationSpecifiers Declarator DeclarationListOpt FunctionBody  // Case 0
 //	|       Declarator DeclarationListOpt FunctionBody                        // Case 1
 type FunctionDefinition struct {
 	Case                  int
@@ -1873,7 +1873,7 @@ func (n *FunctionDefinition) Pos() token.Pos {
 // FunctionSpecifier represents data reduced by productions:
 //
 //	FunctionSpecifier:
-//	        "inline"
+//	        "inline"     // Case 0
 //	|       "_Noreturn"  // Case 1
 type FunctionSpecifier struct {
 	attr  int // tsInline, tsTypedefName, ...
@@ -1900,7 +1900,7 @@ func (n *FunctionSpecifier) Pos() token.Pos {
 // GroupList represents data reduced by productions:
 //
 //	GroupList:
-//	        GroupPart
+//	        GroupPart            // Case 0
 //	|       GroupList GroupPart  // Case 1
 type GroupList struct {
 	Case      int
@@ -1951,7 +1951,7 @@ func (n *GroupList) Pos() token.Pos {
 // GroupListOpt represents data reduced by productions:
 //
 //	GroupListOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       GroupList    // Case 1
 type GroupListOpt struct {
 	GroupList *GroupList
@@ -1976,7 +1976,7 @@ func (n *GroupListOpt) Pos() token.Pos {
 // IdentifierList represents data reduced by productions:
 //
 //	IdentifierList:
-//	        IDENTIFIER
+//	        IDENTIFIER                     // Case 0
 //	|       IdentifierList ',' IDENTIFIER  // Case 1
 type IdentifierList struct {
 	Case           int
@@ -2028,7 +2028,7 @@ func (n *IdentifierList) Pos() token.Pos {
 // IdentifierListOpt represents data reduced by productions:
 //
 //	IdentifierListOpt:
-//	        /* empty */
+//	        /* empty */     // Case 0
 //	|       IdentifierList  // Case 1
 type IdentifierListOpt struct {
 	params         []Parameter
@@ -2054,7 +2054,7 @@ func (n *IdentifierListOpt) Pos() token.Pos {
 // IdentifierOpt represents data reduced by productions:
 //
 //	IdentifierOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       IDENTIFIER   // Case 1
 type IdentifierOpt struct {
 	Token xc.Token
@@ -2079,7 +2079,7 @@ func (n *IdentifierOpt) Pos() token.Pos {
 // IfGroup represents data reduced by productions:
 //
 //	IfGroup:
-//	        PPIF PPTokenList '\n' GroupListOpt
+//	        PPIF PPTokenList '\n' GroupListOpt     // Case 0
 //	|       PPIFDEF IDENTIFIER '\n' GroupListOpt   // Case 1
 //	|       PPIFNDEF IDENTIFIER '\n' GroupListOpt  // Case 2
 type IfGroup struct {
@@ -2110,7 +2110,7 @@ func (n *IfGroup) Pos() token.Pos {
 // IfSection represents data reduced by production:
 //
 //	IfSection:
-//	        IfGroup ElifGroupListOpt ElseGroupOpt EndifLine
+//	        IfGroup ElifGroupListOpt ElseGroupOpt EndifLine  // Case 0
 type IfSection struct {
 	ElifGroupListOpt *ElifGroupListOpt
 	ElseGroupOpt     *ElseGroupOpt
@@ -2137,7 +2137,7 @@ func (n *IfSection) Pos() token.Pos {
 // InitDeclarator represents data reduced by productions:
 //
 //	InitDeclarator:
-//	        Declarator
+//	        Declarator                  // Case 0
 //	|       Declarator '=' Initializer  // Case 1
 type InitDeclarator struct {
 	Case        int
@@ -2165,7 +2165,7 @@ func (n *InitDeclarator) Pos() token.Pos {
 // InitDeclaratorList represents data reduced by productions:
 //
 //	InitDeclaratorList:
-//	        InitDeclarator
+//	        InitDeclarator                         // Case 0
 //	|       InitDeclaratorList ',' InitDeclarator  // Case 1
 type InitDeclaratorList struct {
 	Case               int
@@ -2217,7 +2217,7 @@ func (n *InitDeclaratorList) Pos() token.Pos {
 // InitDeclaratorListOpt represents data reduced by productions:
 //
 //	InitDeclaratorListOpt:
-//	        /* empty */
+//	        /* empty */         // Case 0
 //	|       InitDeclaratorList  // Case 1
 type InitDeclaratorListOpt struct {
 	InitDeclaratorList *InitDeclaratorList
@@ -2242,7 +2242,7 @@ func (n *InitDeclaratorListOpt) Pos() token.Pos {
 // Initializer represents data reduced by productions:
 //
 //	Initializer:
-//	        Expression
+//	        Expression                        // Case 0
 //	|       '{' InitializerList CommaOpt '}'  // Case 1
 //	|       IDENTIFIER ':' Initializer        // Case 2
 type Initializer struct {
@@ -2281,7 +2281,7 @@ func (n *Initializer) Pos() token.Pos {
 // InitializerList represents data reduced by productions:
 //
 //	InitializerList:
-//	        DesignationOpt Initializer
+//	        DesignationOpt Initializer                      // Case 0
 //	|       InitializerList ',' DesignationOpt Initializer  // Case 1
 //	|       /* empty */                                     // Case 2
 type InitializerList struct {
@@ -2345,7 +2345,7 @@ func (n *InitializerList) Pos() token.Pos {
 // IterationStatement represents data reduced by productions:
 //
 //	IterationStatement:
-//	        "while" '(' ExpressionList ')' Statement
+//	        "while" '(' ExpressionList ')' Statement                                               // Case 0
 //	|       "do" Statement "while" '(' ExpressionList ')' ';'                                      // Case 1
 //	|       "for" '(' ExpressionListOpt ';' ExpressionListOpt ';' ExpressionListOpt ')' Statement  // Case 2
 //	|       "for" '(' Declaration ExpressionListOpt ';' ExpressionListOpt ')' Statement            // Case 3
@@ -2383,7 +2383,7 @@ func (n *IterationStatement) Pos() token.Pos {
 // JumpStatement represents data reduced by productions:
 //
 //	JumpStatement:
-//	        "goto" IDENTIFIER ';'
+//	        "goto" IDENTIFIER ';'           // Case 0
 //	|       "continue" ';'                  // Case 1
 //	|       "break" ';'                     // Case 2
 //	|       "return" ExpressionListOpt ';'  // Case 3
@@ -2416,7 +2416,7 @@ func (n *JumpStatement) Pos() token.Pos {
 // LabeledStatement represents data reduced by productions:
 //
 //	LabeledStatement:
-//	        IDENTIFIER ':' Statement
+//	        IDENTIFIER ':' Statement                 // Case 0
 //	|       "case" ConstantExpression ':' Statement  // Case 1
 //	|       "default" ':' Statement                  // Case 2
 type LabeledStatement struct {
@@ -2446,7 +2446,7 @@ func (n *LabeledStatement) Pos() token.Pos {
 // ParameterDeclaration represents data reduced by productions:
 //
 //	ParameterDeclaration:
-//	        DeclarationSpecifiers Declarator
+//	        DeclarationSpecifiers Declarator             // Case 0
 //	|       DeclarationSpecifiers AbstractDeclaratorOpt  // Case 1
 type ParameterDeclaration struct {
 	declarator            *Declarator
@@ -2475,7 +2475,7 @@ func (n *ParameterDeclaration) Pos() token.Pos {
 // ParameterList represents data reduced by productions:
 //
 //	ParameterList:
-//	        ParameterDeclaration
+//	        ParameterDeclaration                    // Case 0
 //	|       ParameterList ',' ParameterDeclaration  // Case 1
 type ParameterList struct {
 	Case                 int
@@ -2527,7 +2527,7 @@ func (n *ParameterList) Pos() token.Pos {
 // ParameterTypeList represents data reduced by productions:
 //
 //	ParameterTypeList:
-//	        ParameterList
+//	        ParameterList            // Case 0
 //	|       ParameterList ',' "..."  // Case 1
 type ParameterTypeList struct {
 	params        []Parameter
@@ -2556,7 +2556,7 @@ func (n *ParameterTypeList) Pos() token.Pos {
 // ParameterTypeListOpt represents data reduced by productions:
 //
 //	ParameterTypeListOpt:
-//	        /* empty */
+//	        /* empty */        // Case 0
 //	|       ParameterTypeList  // Case 1
 type ParameterTypeListOpt struct {
 	ParameterTypeList *ParameterTypeList
@@ -2581,7 +2581,7 @@ func (n *ParameterTypeListOpt) Pos() token.Pos {
 // Pointer represents data reduced by productions:
 //
 //	Pointer:
-//	        '*' TypeQualifierListOpt
+//	        '*' TypeQualifierListOpt          // Case 0
 //	|       '*' TypeQualifierListOpt Pointer  // Case 1
 type Pointer struct {
 	Case                 int
@@ -2609,7 +2609,7 @@ func (n *Pointer) Pos() token.Pos {
 // PointerOpt represents data reduced by productions:
 //
 //	PointerOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       Pointer      // Case 1
 type PointerOpt struct {
 	Pointer *Pointer
@@ -2634,7 +2634,7 @@ func (n *PointerOpt) Pos() token.Pos {
 // PreprocessingFile represents data reduced by production:
 //
 //	PreprocessingFile:
-//	        GroupList
+//	        GroupList  // Case 0
 type PreprocessingFile struct {
 	path      string
 	GroupList *GroupList
@@ -2659,7 +2659,7 @@ func (n *PreprocessingFile) Pos() token.Pos {
 // SelectionStatement represents data reduced by productions:
 //
 //	SelectionStatement:
-//	        "if" '(' ExpressionList ')' Statement
+//	        "if" '(' ExpressionList ')' Statement                   // Case 0
 //	|       "if" '(' ExpressionList ')' Statement "else" Statement  // Case 1
 //	|       "switch" '(' ExpressionList ')' Statement               // Case 2
 type SelectionStatement struct {
@@ -2692,7 +2692,7 @@ func (n *SelectionStatement) Pos() token.Pos {
 // SpecifierQualifierList represents data reduced by productions:
 //
 //	SpecifierQualifierList:
-//	        TypeSpecifier SpecifierQualifierListOpt
+//	        TypeSpecifier SpecifierQualifierListOpt  // Case 0
 //	|       TypeQualifier SpecifierQualifierListOpt  // Case 1
 type SpecifierQualifierList struct {
 	attr                      int // tsInline, tsTypedefName, ...
@@ -2729,7 +2729,7 @@ func (n *SpecifierQualifierList) Pos() token.Pos {
 // SpecifierQualifierListOpt represents data reduced by productions:
 //
 //	SpecifierQualifierListOpt:
-//	        /* empty */
+//	        /* empty */             // Case 0
 //	|       SpecifierQualifierList  // Case 1
 type SpecifierQualifierListOpt struct {
 	attr                   int // tsInline, tsTypedefName, ...
@@ -2756,7 +2756,7 @@ func (n *SpecifierQualifierListOpt) Pos() token.Pos {
 // Statement represents data reduced by productions:
 //
 //	Statement:
-//	        LabeledStatement
+//	        LabeledStatement     // Case 0
 //	|       CompoundStatement    // Case 1
 //	|       ExpressionStatement  // Case 2
 //	|       SelectionStatement   // Case 3
@@ -2810,7 +2810,7 @@ func (n *Statement) Pos() token.Pos {
 // StaticAssertDeclaration represents data reduced by production:
 //
 //	StaticAssertDeclaration:
-//	        "_Static_assert" '(' ConstantExpression ',' STRINGLITERAL ')' ';'
+//	        "_Static_assert" '(' ConstantExpression ',' STRINGLITERAL ')' ';'  // Case 0
 type StaticAssertDeclaration struct {
 	ConstantExpression *ConstantExpression
 	Token              xc.Token
@@ -2840,7 +2840,7 @@ func (n *StaticAssertDeclaration) Pos() token.Pos {
 // StorageClassSpecifier represents data reduced by productions:
 //
 //	StorageClassSpecifier:
-//	        "typedef"
+//	        "typedef"   // Case 0
 //	|       "extern"    // Case 1
 //	|       "static"    // Case 2
 //	|       "auto"      // Case 3
@@ -2870,7 +2870,7 @@ func (n *StorageClassSpecifier) Pos() token.Pos {
 // StructDeclaration represents data reduced by productions:
 //
 //	StructDeclaration:
-//	        SpecifierQualifierList StructDeclaratorList ';'
+//	        SpecifierQualifierList StructDeclaratorList ';'  // Case 0
 //	|       SpecifierQualifierList ';'                       // Case 1
 //	|       StaticAssertDeclaration                          // Case 2
 type StructDeclaration struct {
@@ -2907,7 +2907,7 @@ func (n *StructDeclaration) Pos() token.Pos {
 // StructDeclarationList represents data reduced by productions:
 //
 //	StructDeclarationList:
-//	        StructDeclaration
+//	        StructDeclaration                        // Case 0
 //	|       StructDeclarationList StructDeclaration  // Case 1
 type StructDeclarationList struct {
 	Case                  int
@@ -2958,7 +2958,7 @@ func (n *StructDeclarationList) Pos() token.Pos {
 // StructDeclarator represents data reduced by productions:
 //
 //	StructDeclarator:
-//	        Declarator
+//	        Declarator                            // Case 0
 //	|       DeclaratorOpt ':' ConstantExpression  // Case 1
 type StructDeclarator struct {
 	Case               int
@@ -2998,7 +2998,7 @@ func (n *StructDeclarator) Pos() token.Pos {
 // StructDeclaratorList represents data reduced by productions:
 //
 //	StructDeclaratorList:
-//	        StructDeclarator
+//	        StructDeclarator                           // Case 0
 //	|       StructDeclaratorList ',' StructDeclarator  // Case 1
 type StructDeclaratorList struct {
 	Case                 int
@@ -3050,7 +3050,7 @@ func (n *StructDeclaratorList) Pos() token.Pos {
 // StructOrUnion represents data reduced by productions:
 //
 //	StructOrUnion:
-//	        "struct"
+//	        "struct"  // Case 0
 //	|       "union"   // Case 1
 type StructOrUnion struct {
 	Case  int
@@ -3076,7 +3076,7 @@ func (n *StructOrUnion) Pos() token.Pos {
 // StructOrUnionSpecifier represents data reduced by productions:
 //
 //	StructOrUnionSpecifier:
-//	        StructOrUnion IdentifierOpt '{' StructDeclarationList '}'
+//	        StructOrUnion IdentifierOpt '{' StructDeclarationList '}'  // Case 0
 //	|       StructOrUnion IDENTIFIER                                   // Case 1
 //	|       StructOrUnion IdentifierOpt '{' '}'                        // Case 2
 type StructOrUnionSpecifier struct {
@@ -3111,7 +3111,7 @@ func (n *StructOrUnionSpecifier) Pos() token.Pos {
 // TranslationUnit represents data reduced by productions:
 //
 //	TranslationUnit:
-//	        ExternalDeclaration
+//	        ExternalDeclaration                  // Case 0
 //	|       TranslationUnit ExternalDeclaration  // Case 1
 type TranslationUnit struct {
 	Comments            map[token.Pos]int // Position -> comment ID. Enable using the KeepComments option.
@@ -3166,7 +3166,7 @@ func (n *TranslationUnit) Pos() token.Pos {
 // TypeName represents data reduced by production:
 //
 //	TypeName:
-//	        SpecifierQualifierList AbstractDeclaratorOpt
+//	        SpecifierQualifierList AbstractDeclaratorOpt  // Case 0
 type TypeName struct {
 	Type                   Type
 	declarator             *Declarator
@@ -3194,7 +3194,7 @@ func (n *TypeName) Pos() token.Pos {
 // TypeQualifier represents data reduced by productions:
 //
 //	TypeQualifier:
-//	        "const"
+//	        "const"     // Case 0
 //	|       "restrict"  // Case 1
 //	|       "volatile"  // Case 2
 type TypeQualifier struct {
@@ -3222,7 +3222,7 @@ func (n *TypeQualifier) Pos() token.Pos {
 // TypeQualifierList represents data reduced by productions:
 //
 //	TypeQualifierList:
-//	        TypeQualifier
+//	        TypeQualifier                    // Case 0
 //	|       TypeQualifierList TypeQualifier  // Case 1
 type TypeQualifierList struct {
 	attr              int // tsInline, tsTypedefName, ...
@@ -3274,7 +3274,7 @@ func (n *TypeQualifierList) Pos() token.Pos {
 // TypeQualifierListOpt represents data reduced by productions:
 //
 //	TypeQualifierListOpt:
-//	        /* empty */
+//	        /* empty */        // Case 0
 //	|       TypeQualifierList  // Case 1
 type TypeQualifierListOpt struct {
 	TypeQualifierList *TypeQualifierList
@@ -3299,7 +3299,7 @@ func (n *TypeQualifierListOpt) Pos() token.Pos {
 // TypeSpecifier represents data reduced by productions:
 //
 //	TypeSpecifier:
-//	        "void"
+//	        "void"                       // Case 0
 //	|       "char"                       // Case 1
 //	|       "short"                      // Case 2
 //	|       "int"                        // Case 3
@@ -3357,7 +3357,7 @@ func (n *TypeSpecifier) Pos() token.Pos {
 // VolatileOpt represents data reduced by productions:
 //
 //	VolatileOpt:
-//	        /* empty */
+//	        /* empty */  // Case 0
 //	|       "volatile"   // Case 1
 type VolatileOpt struct {
 	Token xc.Token

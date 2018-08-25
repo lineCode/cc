@@ -347,7 +347,7 @@ loop0:
 					stars = dd.Declarator.stars()
 					if stars == 0 {
 						copy(dds[i:], dds[i+1:])
-						dds = dds[:len(dds)-1 : len(dds)-1]
+						dds = dds[: len(dds)-1 : len(dds)-1]
 						goto again
 					}
 				} else {
@@ -2800,7 +2800,7 @@ func (n *IdentifierListOpt) post(lx *lexer, dlo *DeclarationListOpt) {
 		}
 		nm := t.Val
 		if r, ok := ilm[nm]; ok {
-			lx.report.ErrTok(t, "duplicate parameter name declaration, previous at %s", r.pos)
+			lx.report.ErrTok(t, "duplicate parameter name declaration, previous at %s", position(r.pos))
 			continue
 		}
 

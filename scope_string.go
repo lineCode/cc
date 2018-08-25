@@ -2,7 +2,7 @@
 
 package cc
 
-import "fmt"
+import "strconv"
 
 const _Scope_name = "ScopeFileScopeBlockScopeMembersScopeParams"
 
@@ -10,7 +10,7 @@ var _Scope_index = [...]uint8{0, 9, 19, 31, 42}
 
 func (i Scope) String() string {
 	if i < 0 || i >= Scope(len(_Scope_index)-1) {
-		return fmt.Sprintf("Scope(%d)", i)
+		return "Scope(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
 	return _Scope_name[_Scope_index[i]:_Scope_index[i+1]]
 }
