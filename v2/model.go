@@ -187,6 +187,8 @@ type FieldProperties struct {
 	Padding    int   // Adjustment to enforce proper alignment.
 	Size       int64 // Field size for copying.
 	Type       Type
+
+	Anonymous bool
 }
 
 // Mask returns the bit mask of bit field described by f.
@@ -259,7 +261,7 @@ func (m Model) Layout(t Type) (r []FieldProperties) {
 				if off != z {
 					r[i-1].Padding = int(off - z)
 				}
-				r[i] = FieldProperties{Offset: off, Size: sz, Declarator: v.Declarator, Type: v.Type}
+				r[i] = FieldProperties{Offset: off, Size: sz, Declarator: v.Declarator, Type: v.Type, Anonymous: v.Anonymous}
 				if sz == 0 && i == len(x.Fields)-1 {
 					sz = 1
 					zeroFix = true
@@ -539,7 +541,11 @@ func (m Model) defaultArgumentPromotion(op Operand) (r Operand) {
 			u = x.Enums[0].Operand.Type
 		case *NamedType:
 			u = x.Type
-		case *PointerType:
+		case
+			*PointerType,
+			*TaggedStructType,
+			*TaggedUnionType:
+
 			op.Type = x
 			return op
 		case *TaggedEnumType:

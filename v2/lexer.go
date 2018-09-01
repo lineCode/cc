@@ -29,6 +29,7 @@ var (
 		ENUM:         {},
 		FLOAT:        {},
 		GOTO:         {},
+		IDENTIFIER:   {},
 		INT:          {},
 		LONG:         {},
 		SHORT:        {},

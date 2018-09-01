@@ -328,7 +328,12 @@ outer:
 				panic(fmt.Errorf("%v", ctx.position(n)))
 			}
 
-			n.Operand = t.Size.mul(ctx, ctx.sizeof(t.Item))
+			switch d := n.Expr.Declarator; {
+			case d != nil && d.IsFunctionParameter:
+				n.Operand = ctx.sizeof(Ptr)
+			default:
+				n.Operand = t.Size.mul(ctx, ctx.sizeof(t.Item))
+			}
 		case
 			*PointerType,
 			*StructType,
@@ -396,6 +401,10 @@ outer:
 			n.InitializerList = &InitializerList{}
 		}
 		n.InitializerList.check(ctx, t, fn)
+		if fn == nil {
+			break
+		}
+
 		nmTok := n.Token
 		nmTok.Char.Rune = IDENTIFIER
 		fn.unnamed++
@@ -3190,7 +3199,7 @@ func (n *StructDeclaration) check(ctx *context, field *int) []Field {
 		ds := &DeclarationSpecifier{}
 		n.SpecifierQualifierList.check(ctx, ds)
 		*field++
-		return []Field{{Type: ds.typ(ctx)}}
+		return []Field{{Type: ds.typ(ctx), Anonymous: true}}
 	default:
 		panic(fmt.Errorf("%v: TODO %v", ctx.position(n), n.Case))
 	}

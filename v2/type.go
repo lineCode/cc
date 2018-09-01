@@ -582,6 +582,8 @@ type Field struct {
 	Name       int
 	PackedType Type // Bits != 0: underlaying struct field type
 	Type       Type
+
+	Anonymous bool
 }
 
 func (f Field) equal(g Field) bool {
@@ -1125,6 +1127,7 @@ func (t *StructType) Equal(u Type) bool {
 		case
 			Char,
 			Int,
+			Long,
 			UChar,
 			UInt,
 			UShort,
@@ -1207,6 +1210,12 @@ func (t *TaggedEnumType) Equal(u Type) bool {
 		default:
 			return y.Equal(u)
 		}
+	case *TaggedEnumType:
+		if t.Tag == x.Tag {
+			return true
+		}
+
+		panic("TODO")
 	case TypeKind:
 		if x.IsScalarType() {
 			return false
@@ -1392,7 +1401,7 @@ func (t *TaggedStructType) assign(ctx *context, n Node, op Operand) Operand {
 		}
 		panic("TODO")
 	default:
-		panic("TODO")
+		panic(fmt.Errorf("%T", x))
 	}
 }
 
@@ -1738,6 +1747,7 @@ func underlyingType(t Type, enums bool) Type {
 				LongDouble,
 				LongDoubleComplex,
 				LongLong,
+				Ptr,
 				SChar,
 				Short,
 				UChar,

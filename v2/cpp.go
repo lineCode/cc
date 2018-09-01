@@ -16,6 +16,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/cznic/golex/lex"
@@ -1114,6 +1115,29 @@ func (c *cpp) directive(r tokenReader, w tokenWriter, cs conds) (y conds) {
 				panic(fmt.Errorf("%v: %v", c.position(t), cs.tos()))
 			}
 		case idLine:
+			if !cs.on() {
+				break
+			}
+
+			f := fset.File(line[0].Pos())
+			off := f.Offset(line[0].Pos())
+			pos := c.position(line[0])
+			line = c.expands(trimAllSpace(line[1:]), false)
+			switch len(line) {
+			case 1: // #line linenum
+				n, err := strconv.ParseUint(string(line[0].S()), 10, 31)
+				if err != nil {
+					break
+				}
+
+				f.AddLineInfo(off, pos.Filename, int(n-1))
+				//TODO
+			case 2: // #line linenum filename
+				//TODO
+			default:
+				// ignore
+			}
+
 			// ignored
 		case idPragma:
 			if !cs.on() {

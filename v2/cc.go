@@ -858,6 +858,9 @@ func (s *Scope) insertLabel(ctx *context, st *LabeledStmt) {
 }
 
 func (s *Scope) insertEnumTag(ctx *context, nm int, es *EnumSpecifier) {
+	for s.structScope {
+		s = s.Parent
+	}
 	if s.EnumTags == nil {
 		s.EnumTags = map[int]*EnumSpecifier{}
 	}
@@ -885,6 +888,9 @@ func (s *Scope) insertDeclarator(ctx *context, d *Declarator) {
 }
 
 func (s *Scope) insertEnumerationConstant(ctx *context, c *EnumerationConstant) {
+	for s.structScope {
+		s = s.Parent
+	}
 	if s.Idents == nil {
 		s.Idents = map[int]Node{}
 	}
