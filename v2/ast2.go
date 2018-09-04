@@ -1691,7 +1691,13 @@ func (n *Declarator) Name() int { return n.DirectDeclarator.nm() }
 
 func (n *DirectDeclarator) nm() int {
 	switch n.Case {
-	case DirectDeclaratorArray, DirectDeclaratorParamList, DirectDeclaratorIdentList:
+	case
+		DirectDeclaratorArray,
+		DirectDeclaratorArraySize,
+		DirectDeclaratorArrayVar,
+		DirectDeclaratorIdentList,
+		DirectDeclaratorParamList:
+
 		return n.DirectDeclarator.nm()
 	case DirectDeclaratorIdent:
 		return n.Token.Val
@@ -2824,9 +2830,25 @@ func (n *DirectDeclarator) check(ctx *context, t Type, sc []int, fn *Declarator)
 			Variadic: variadic,
 		}
 		return n.DirectDeclarator.check(ctx, t, sc, fn)
-	//TODO case DirectDeclaratorArraySize: // DirectDeclarator '[' "static" TypeQualifierListOpt Expr ']'
+	case DirectDeclaratorArraySize: // DirectDeclarator '[' "static" TypeQualifierListOpt Expr ']'
+		var tq []*TypeQualifier
+		n.TypeQualifierListOpt.check(ctx, &tq)
+		sz := n.Expr.eval(ctx, true, fn)
+		t := &ArrayType{
+			Item:           t,
+			Size:           sz,
+			TypeQualifiers: tq,
+		}
+		return n.DirectDeclarator.check(ctx, t, sc, fn)
 	//TODO case DirectDeclaratorArraySize2: // DirectDeclarator '[' TypeQualifierList "static" Expr ']'
-	//TODO case DirectDeclaratorArrayVar: // DirectDeclarator '[' TypeQualifierListOpt '*' ']'
+	case DirectDeclaratorArrayVar: // DirectDeclarator '[' TypeQualifierListOpt '*' ']'
+		var tq []*TypeQualifier
+		n.TypeQualifierListOpt.check(ctx, &tq)
+		t := &ArrayType{
+			Item:           t,
+			TypeQualifiers: tq,
+		}
+		return n.DirectDeclarator.check(ctx, t, sc, fn)
 	case DirectDeclaratorArray: // DirectDeclarator '[' TypeQualifierListOpt ExprOpt ']'
 		var tq []*TypeQualifier
 		n.TypeQualifierListOpt.check(ctx, &tq)
@@ -2939,7 +2961,14 @@ func (n *DirectAbstractDeclarator) check(ctx *context, t Type) Type {
 	switch n.Case {
 	case DirectAbstractDeclaratorAbstract: // '(' AbstractDeclarator ')'
 		return n.AbstractDeclarator.check(ctx, nil, t)
-	//TODO case DirectAbstractDeclaratorParamList: // '(' ParameterTypeListOpt ')'
+	case DirectAbstractDeclaratorParamList: // '(' ParameterTypeListOpt ')'
+		fp, variadic := n.ParameterTypeListOpt.check(ctx)
+		t := &FunctionType{
+			Params:   fp,
+			Result:   t,
+			Variadic: variadic,
+		}
+		return t
 	case DirectAbstractDeclaratorDFn: // DirectAbstractDeclarator '(' ParameterTypeListOpt ')'
 		fp, variadic := n.ParameterTypeListOpt.check(ctx)
 		t := &FunctionType{
@@ -2948,7 +2977,19 @@ func (n *DirectAbstractDeclarator) check(ctx *context, t Type) Type {
 			Variadic: variadic,
 		}
 		return n.DirectAbstractDeclarator.check(ctx, t)
-	//TODO case DirectAbstractDeclaratorDArrSize: // DirectAbstractDeclaratorOpt '[' "static" TypeQualifierListOpt Expr ']'
+	case DirectAbstractDeclaratorDArrSize: // DirectAbstractDeclaratorOpt '[' "static" TypeQualifierListOpt Expr ']'
+		var tq []*TypeQualifier
+		n.TypeQualifierListOpt.check(ctx, &tq)
+		sz := n.Expr.eval(ctx, true, nil)
+		t := &ArrayType{
+			Item: t,
+			Size: sz,
+		}
+		if n.DirectAbstractDeclaratorOpt == nil {
+			return t
+		}
+
+		return n.DirectAbstractDeclaratorOpt.DirectAbstractDeclarator.check(ctx, t)
 	//TODO case DirectAbstractDeclaratorDArrVL: // DirectAbstractDeclaratorOpt '[' '*' ']'
 	case DirectAbstractDeclaratorDArr: // DirectAbstractDeclaratorOpt '[' ExprOpt ']'
 		n.ExprOpt.eval(ctx, true, nil)
@@ -2966,7 +3007,23 @@ func (n *DirectAbstractDeclarator) check(ctx *context, t Type) Type {
 
 		return n.DirectAbstractDeclaratorOpt.DirectAbstractDeclarator.check(ctx, t)
 	//TODO case DirectAbstractDeclaratorDArrSize2: // DirectAbstractDeclaratorOpt '[' TypeQualifierList "static" Expr ']'
-	//TODO case DirectAbstractDeclaratorDArr2: // DirectAbstractDeclaratorOpt '[' TypeQualifierList ExprOpt ']'
+	case DirectAbstractDeclaratorDArr2: // DirectAbstractDeclaratorOpt '[' TypeQualifierList ExprOpt ']'
+		var tq []*TypeQualifier
+		n.TypeQualifierListOpt.check(ctx, &tq)
+		n.ExprOpt.eval(ctx, true, nil)
+		var sz Operand
+		if o := n.ExprOpt; o != nil {
+			sz = o.Expr.Operand
+		}
+		t := &ArrayType{
+			Item: t,
+			Size: sz,
+		}
+		if n.DirectAbstractDeclaratorOpt == nil {
+			return t
+		}
+
+		return n.DirectAbstractDeclaratorOpt.DirectAbstractDeclarator.check(ctx, t)
 	default:
 		panic(fmt.Errorf("%v: TODO %v", ctx.position(n), n.Case))
 	}
@@ -3073,18 +3130,21 @@ func (n *EnumSpecifier) check(ctx *context) { // [0]6.7.2.2
 				max = u
 			}
 		}
+		t.Min = min
+		t.Max = max
 		var x Operand
-		switch {
-		case min < 0:
-			if u := uint64(-min); u > max {
-				max = u
-			}
-			x = newIntConst(ctx, n, max, Char, Int, Long, LongLong, ULongLong)
-		default:
-			x = newIntConst(ctx, n, max, UChar, UInt, ULong, ULongLong)
+		//TODO- switch {
+		//TODO- case min < 0:
+		if u := uint64(-min); u > max {
+			max = u
 		}
+		x = newIntConst(ctx, n, max /*TODO- Char, */, Int, Long, LongLong, ULongLong)
+		//TODO- default:
+		//TODO- 	x = newIntConst(ctx, n, max /*TODO- UChar, */, UInt, ULong, ULongLong)
+		//TODO- }
 		for i := range t.Enums {
 			t.Enums[i].Operand.Type = x.Type
+			t.Enums[i].Operand.IsEnumConst = true
 		}
 		if n.IdentifierOpt != nil {
 			n.scope.insertEnumTag(ctx, n.IdentifierOpt.Token.Val, n)

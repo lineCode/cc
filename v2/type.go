@@ -217,6 +217,8 @@ func (t TypeKind) IsCompatible(u Type) bool {
 			}
 		case *NamedType:
 			u = x.Type
+		case *EnumType:
+			u = x.Enums[0].Operand.Type
 		case TypeKind:
 			if t.IsIntegerType() && u.IsIntegerType() {
 				return intConvRank[t] == intConvRank[x] && isSigned[t] == isSigned[x]
@@ -395,6 +397,8 @@ func (t *ArrayType) IsCompatible(u Type) bool {
 		}
 
 		return true
+	case *NamedType:
+		return x.IsCompatible(t)
 	case *PointerType:
 		return t.Size.Type == nil && t.Item.IsCompatible(x.Item)
 	case TypeKind:
@@ -483,6 +487,8 @@ func (t *ArrayType) String() string {
 type EnumType struct {
 	Tag   int
 	Enums []*EnumerationConstant
+	Min   int64
+	Max   uint64
 }
 
 func (t *EnumType) find(nm int) *EnumerationConstant {
@@ -639,6 +645,8 @@ func (t *FunctionType) IsCompatible(u Type) bool {
 		return true
 	case *NamedType:
 		return x.Type.IsCompatible(t)
+	case *PointerType:
+		return x.Item.IsCompatible(t)
 	default:
 		panic(fmt.Errorf("%T", x))
 	}
@@ -860,6 +868,8 @@ func (t *PointerType) IsCompatible(u Type) bool {
 		return t.Item.IsCompatible(x.Item)
 	case *NamedType:
 		return t.IsCompatible(x.Type)
+	case *FunctionType:
+		return x.IsCompatible(t)
 	case *PointerType:
 		// [0]6.3.2.3
 		//
@@ -870,7 +880,7 @@ func (t *PointerType) IsCompatible(u Type) bool {
 		return t.Item == Void || x.Item == Void ||
 			ai != nil && ai.IsCompatible(x.Item) ||
 			underlyingType(t.Item, true).IsCompatible(underlyingType(x.Item, true)) ||
-			unsigned(t.Item) == unsigned(x.Item)
+			Unsigned(t.Item) == Unsigned(x.Item)
 	case *StructType:
 		return false
 	case TypeKind:
@@ -884,7 +894,7 @@ func (t *PointerType) IsCompatible(u Type) bool {
 	}
 }
 
-func unsigned(t Type) TypeKind {
+func Unsigned(t Type) TypeKind {
 	switch k := underlyingType(t, false).Kind(); k {
 	case Char, SChar:
 		return UChar

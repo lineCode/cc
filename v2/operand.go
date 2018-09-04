@@ -203,6 +203,12 @@ func UsualArithmeticConversions(m Model, a, b Operand) (Operand, Operand) {
 	// Otherwise, both operands are converted to the unsigned integer type
 	// corresponding to the type of the operand with signed integer type.
 	switch signed.Kind() {
+	case Int:
+		if a.IsEnumConst || b.IsEnumConst {
+			return a, b
+		}
+
+		return a.ConvertTo(m, UInt), b.ConvertTo(m, UInt)
 	case Long:
 		return a.ConvertTo(m, ULong), b.ConvertTo(m, ULong)
 	case LongLong:
@@ -217,6 +223,8 @@ type Operand struct {
 	Type Type
 	ir.Value
 	FieldProperties *FieldProperties
+
+	IsEnumConst bool // Blocks int -> unsigned int promotions. See [0]6.4.4.3/2
 }
 
 // Bits return the width of a bit field operand or zero othewise
