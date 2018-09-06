@@ -543,8 +543,10 @@ func (m Model) defaultArgumentPromotion(op Operand) (r Operand) {
 			u = x.Type
 		case
 			*PointerType,
+			*StructType,
 			*TaggedStructType,
-			*TaggedUnionType:
+			*TaggedUnionType,
+			*UnionType:
 
 			op.Type = x
 			return op

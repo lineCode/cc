@@ -1410,6 +1410,12 @@ func (t *TaggedStructType) assign(ctx *context, n Node, op Operand) Operand {
 			panic("TODO")
 		}
 		panic("TODO")
+	case *StructType:
+		t2 := t.getType()
+		if t2.Equal(x) {
+			return op
+		}
+		panic(fmt.Errorf("%v: %T %v, %T %v", ctx.position(n), t2, t2, x, x))
 	default:
 		panic(fmt.Errorf("%T", x))
 	}

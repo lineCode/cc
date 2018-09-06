@@ -443,17 +443,6 @@ outer:
 				n.Operand.Type = t
 				break
 			}
-
-			switch {
-			case t.Kind() == Union && ctx.tweaks.EnableUnionCasts:
-				// ok
-			default:
-				panic(fmt.Errorf("%v: %v, (%v)%v, not a scalar", ctx.position(n), n.Case, t, op))
-			}
-		}
-
-		if !op.isScalarType() && !isVaList(op.Type) {
-			panic(fmt.Errorf("%v: %v, (%v)%v, not a scalar", ctx.position(n), n.Case, t, op))
 		}
 
 	more:
@@ -468,6 +457,8 @@ outer:
 			goto more
 		case *TaggedEnumType:
 			n.Operand = op.ConvertTo(ctx.model, t)
+		case *TaggedStructType:
+			n.Operand.Type = t
 		case *TaggedUnionType:
 			n.Operand = op.ConvertTo(ctx.model, t)
 		case TypeKind:
