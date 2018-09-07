@@ -730,7 +730,10 @@ func (o Operand) IsZero() bool {
 		return x.Value == 0
 	case *ir.Int64Value:
 		return x.Value == 0
-	case *ir.StringValue:
+	case
+		*ir.StringValue,
+		*ir.WideStringValue:
+
 		return false
 	case *ir.AddressValue:
 		return x == Null

@@ -610,12 +610,10 @@ func (c *context) strConst(t xc.Token) Operand {
 		var buf bytes.Buffer
 		s = s[1 : len(s)-1] // Remove outer "s.
 		runes := []rune(string(s))
-		var wrunes []rune
 		for i := 0; i < len(runes); {
 			switch r := runes[i]; {
 			case r == '\\':
 				r, n := decodeEscapeSequence(runes[i:])
-				wrunes = append(wrunes, r)
 				switch {
 				case r < 0:
 					buf.WriteByte(byte(-r))
@@ -624,7 +622,6 @@ func (c *context) strConst(t xc.Token) Operand {
 				}
 				i += n
 			default:
-				wrunes = append(wrunes, r)
 				buf.WriteByte(byte(r))
 				i++
 			}
@@ -635,7 +632,7 @@ func (c *context) strConst(t xc.Token) Operand {
 			typ := c.wideChar()
 			return Operand{
 				Type:  &ArrayType{Item: typ, Size: Operand{Type: Int, Value: &ir.Int64Value{Value: c.model.Sizeof(typ) * int64(len(runes)+1)}}},
-				Value: &ir.WideStringValue{Value: wrunes},
+				Value: &ir.WideStringValue{Value: runes},
 			}
 		case STRINGLITERAL:
 			return Operand{
