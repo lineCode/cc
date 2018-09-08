@@ -611,7 +611,6 @@ outer:
 	case ExprLAnd: // Expr "&&" Expr
 		n.Operand = Operand{Type: Int}
 		n.Expr.eval(ctx, arr2ptr, fn)
-		n.Expr2.eval(ctx, arr2ptr, fn)
 		if n.Expr.IsZero() {
 			n.Operand.Value = &ir.Int64Value{Value: 0}
 			break
@@ -903,7 +902,6 @@ outer:
 	case ExprLOr: // Expr "||" Expr
 		n.Operand = Operand{Type: Int}
 		n.Expr.eval(ctx, arr2ptr, fn)
-		n.Expr2.eval(ctx, arr2ptr, fn)
 		if n.Expr.IsNonZero() {
 			n.Operand.Value = &ir.Int64Value{Value: 1}
 			break
@@ -1166,13 +1164,22 @@ outer:
 	case ExprCond: // Expr '?' ExprList ':' Expr
 		// [0]6.5.15
 		cond := n.Expr.eval(ctx, arr2ptr, fn)
-		a := n.ExprList.eval(ctx, arr2ptr, fn)
-		b := n.Expr2.eval(ctx, arr2ptr, fn)
 		// 2. The first operand shall have scalar type.
 		if !cond.isScalarType() {
 			panic(ctx.position(n))
 		}
-		done := false
+
+		switch {
+		case cond.IsNonZero():
+			n.Operand = n.ExprList.eval(ctx, arr2ptr, fn)
+			break outer
+		case cond.IsZero():
+			n.Operand = n.Expr2.eval(ctx, arr2ptr, fn)
+			break outer
+		}
+
+		a := n.ExprList.eval(ctx, arr2ptr, fn)
+		b := n.Expr2.eval(ctx, arr2ptr, fn)
 		switch {
 		// 3. One of the following shall hold for the second and third
 		// operands:
@@ -1206,7 +1213,6 @@ outer:
 			n.Operand = Operand{Type: b.Type}
 			if cond.IsNonZero() {
 				n.Operand.Value = Null
-				done = true
 			}
 		case
 			// one operand is a pointer and the other is a null pointer constant
@@ -1215,22 +1221,11 @@ outer:
 			n.Operand = Operand{Type: a.Type}
 			if cond.IsZero() {
 				n.Operand.Value = Null
-				done = true
 			}
 		case a.Type.Kind() == Void && b.Type.Kind() == Void: // assert
 			n.Operand = Operand{Type: Void}
 		default:
 			panic(fmt.Errorf("%v: %v, %v", ctx.position(n), a, b))
-		}
-		if done {
-			break
-		}
-
-		switch {
-		case cond.IsNonZero():
-			n.Operand = a
-		case cond.IsZero():
-			n.Operand = b
 		}
 	case ExprIndex: // Expr '[' ExprList ']'
 		// [0]6.5.2.1

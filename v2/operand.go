@@ -494,10 +494,6 @@ func (o Operand) cpl(ctx *context) Operand {
 
 func (o Operand) div(ctx *context, n Node, p Operand) (r Operand) {
 	o, p = UsualArithmeticConversions(ctx.model, o, p)
-	if o.IsZero() { // 0 / x == 0
-		return o.normalize(ctx.model)
-	}
-
 	if o.Value == nil || p.Value == nil {
 		o.Value = nil
 		return o.normalize(ctx.model)
